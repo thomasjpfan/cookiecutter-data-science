@@ -33,6 +33,10 @@ def get_data_dir() -> Path:
     return Path("data")
 
 
+def get_processed_dir() -> Path:
+    return Path("data") / "processed"
+
+
 def get_final_run_dir() -> Path:
     artifacts_dir = Path("artifacts")
     run_folder = artifacts_dir / "final"

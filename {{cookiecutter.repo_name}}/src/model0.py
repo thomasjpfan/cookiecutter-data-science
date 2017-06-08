@@ -4,7 +4,7 @@ from pathlib import Path
 import click
 
 from utils import (
-    get_data_dir, get_run_dir, get_model_dir, write_cv,
+    get_processed_dir, get_run_dir, get_model_dir, write_cv,
     get_predict_file, get_final_run_dir
 )
 
@@ -15,11 +15,11 @@ def _load_model():
     pass
 
 
-def _train(data_dir: Path, model_dir: Path, run_dir: Path) -> float:
+def _train(processed_dir: Path, model_dir: Path, run_dir: Path) -> float:
     pass
 
 
-def _predict(data_dir: Path, model_dir: Path, predict_file: Path):
+def _predict(processed_dir: Path, model_dir: Path, predict_file: Path):
     pass
 
 
@@ -31,7 +31,7 @@ def cli():
 @cli.command()
 @click.option("final", is_flag=True)
 def train(final):
-    data_dir = get_data_dir()
+    data_dir = get_processed_dir()
 
     if final:
         run_dir = get_final_run_dir()
@@ -50,7 +50,7 @@ def train(final):
 @cli.command()
 @click.argument("run_dir", type=click.Path(exists=True))
 def predict(run_dir):
-    data_dir = get_data_dir()
+    data_dir = get_processed_dir()
     model_dir = get_model_dir(run_dir, MODEL_NAME)
 
     print("Predicting on test data!")
