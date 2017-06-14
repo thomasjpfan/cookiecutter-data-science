@@ -4,8 +4,9 @@ from pathlib import Path
 import click
 
 from utils import (
-    get_processed_dir, get_run_dir, get_model_dir, write_cv,
-    get_predict_file, get_final_run_dir
+    get_run_dir, get_model_dir, write_score,
+    get_predict_file, get_final_run_dir,
+    get_data_dir
 )
 
 MODEL_NAME = "model0"
@@ -31,7 +32,7 @@ def cli():
 @cli.command()
 @click.option("final", is_flag=True)
 def train(final):
-    data_dir = get_processed_dir()
+    data_dir = get_data_dir("processed")
 
     if final:
         run_dir = get_final_run_dir()
@@ -44,13 +45,13 @@ def train(final):
     cv = _train(data_dir, model_dir, run_dir)
 
     print(f"Finish training {MODEL_NAME}, cv: {cv}")
-    write_cv(run_dir, cv)
+    write_score(run_dir, cv)
 
 
 @cli.command()
 @click.argument("run_dir", type=click.Path(exists=True))
 def predict(run_dir):
-    data_dir = get_processed_dir()
+    data_dir = get_data_dir("processed")
     model_dir = get_model_dir(run_dir, MODEL_NAME)
 
     print("Predicting on test data!")
