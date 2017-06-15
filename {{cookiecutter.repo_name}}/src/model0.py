@@ -30,14 +30,15 @@ def cli():
 
 
 @cli.command()
+@click.option("run_id", type=str)
 @click.option("final", is_flag=True)
-def train(final):
+def train(run_id, final):
     data_dir = get_data_dir("processed")
 
     if final:
         run_dir = get_final_run_dir()
     else:
-        run_dir = get_run_dir()
+        run_dir = get_run_dir(run_id)
 
     model_dir = get_model_dir(run_dir, MODEL_NAME)
 

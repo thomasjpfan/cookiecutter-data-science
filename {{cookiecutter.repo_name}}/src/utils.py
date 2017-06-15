@@ -1,12 +1,16 @@
 """Utility functions for folder mangament"""
+from typing import Optional
 from pathlib import Path
 from datetime import datetime
 
 
-def get_run_dir() -> Path:
+def get_run_dir(run_id: Optional[str] = None) -> Path:
     artifacts_dir = Path("artifacts")
-    date_id = datetime.now().isoformat()
-    run_folder = artifacts_dir / date_id
+
+    if not run_id:
+        run_id = datetime.now().isoformat()
+
+    run_folder = artifacts_dir / run_id
     if not run_folder.exists():
         run_folder.mkdir()
     return run_folder
@@ -44,4 +48,3 @@ def get_data_dir(data_type: str="root") -> Path:
         return Path("data") / data_type
     else:
         raise RuntimeError("Invalid data_type")
-
