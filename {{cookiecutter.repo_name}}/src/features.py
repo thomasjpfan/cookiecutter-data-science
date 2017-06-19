@@ -13,3 +13,7 @@ def _gen_features(df: pd.DataFrame) -> pd.DataFrame:
 def gen_features():
     data_dir = get_data_dir()
     pass
+
+
+if __name__ == '__main__':
+    gen_features()

@@ -2,6 +2,26 @@
 from typing import Optional
 from pathlib import Path
 from datetime import datetime
+import logging
+
+
+def get_logger(name, log_fn):
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.DEBUG)
+
+    stream_handler = logging.StreamHandler()
+    stream_handler.setLevel(logging.DEBUG)
+
+    file_handler = logging.FileHandler(log_fn)
+    file_handler.setLevel(logging.DEBUG)
+
+    stream_handler.setFormatter(logging.Formatter('=> %(message)s'))
+    file_handler.setFormatter(logging.Formatter('=> %(message)s'))
+
+    logger.addHandler(stream_handler)
+    logger.addHandler(file_handler)
+
+    return logger
 
 
 def get_run_dir(run_id: Optional[str] = None) -> Path:
@@ -11,14 +31,6 @@ def get_run_dir(run_id: Optional[str] = None) -> Path:
         run_id = datetime.now().isoformat()
 
     run_folder = artifacts_dir / run_id
-    if not run_folder.exists():
-        run_folder.mkdir()
-    return run_folder
-
-
-def get_final_run_dir() -> Path:
-    artifacts_dir = Path("artifacts")
-    run_folder = artifacts_dir / "final"
     if not run_folder.exists():
         run_folder.mkdir()
     return run_folder

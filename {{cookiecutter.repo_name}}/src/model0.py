@@ -5,7 +5,7 @@ import click
 
 from utils import (
     get_run_dir, get_model_dir, write_score,
-    get_predict_file, get_final_run_dir,
+    get_predict_file,
     get_data_dir
 )
 
@@ -16,11 +16,11 @@ def _load_model():
     pass
 
 
-def _train(processed_dir: Path, model_dir: Path, run_dir: Path) -> float:
+def _train(model_dir: Path, run_dir: Path, run_id: str, seed: int) -> float:
     pass
 
 
-def _predict(processed_dir: Path, model_dir: Path, predict_file: Path):
+def _predict(model_dir: Path, run_id: str, predict_file: Path):
     pass
 
 
@@ -30,33 +30,32 @@ def cli():
 
 
 @cli.command()
-@click.option("run_id", type=str)
-@click.option("final", is_flag=True)
-def train(run_id, final):
-    data_dir = get_data_dir("processed")
+@click.option("--run-id", type=str, default="")
+@click.option("--seed", type=int, default=42)
+def train(run_id, seed):
 
-    if final:
-        run_dir = get_final_run_dir()
-    else:
-        run_dir = get_run_dir(run_id)
+    run_dir = get_run_dir(run_id)
 
     model_dir = get_model_dir(run_dir, MODEL_NAME)
 
     print("Starting to train model")
-    cv = _train(data_dir, model_dir, run_dir)
+    cv = _train(model_dir, run_dir, run_id, seed)
 
     print(f"Finish training {MODEL_NAME}, cv: {cv}")
     write_score(run_dir, cv)
 
 
 @cli.command()
-@click.argument("run_dir", type=click.Path(exists=True))
+@click.argument("--run-dir", type=click.Path(exists=True))
 def predict(run_dir):
-    data_dir = get_data_dir("processed")
     model_dir = get_model_dir(run_dir, MODEL_NAME)
 
     print("Predicting on test data!")
 
     predict_file = get_predict_file(run_dir)
-    _predict(data_dir, model_dir, predict_file)
+    _predict(model_dir, predict_file)
     print("Done!")
+
+
+if __name__ == '__main__':
+    cli()

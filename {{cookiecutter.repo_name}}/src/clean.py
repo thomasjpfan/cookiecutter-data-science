@@ -17,3 +17,7 @@ def _clean(df: pd.DataFrame) -> pd.DataFrame:
 def clean():
     data_dir = get_data_dir()
     pass
+
+
+if __name__ == '__main__':
+    clean()
