@@ -43,11 +43,6 @@ def get_model_dir(run_dir: Path, model_name: str) -> Path:
     return model_dir
 
 
-def get_predict_file(run_dir: Path) -> Path:
-    output = run_dir / f"prediction.csv"
-    return output
-
-
 def write_score(run_dir: Path, cv: float):
     cv_path = run_dir / "{}.score".format(cv)
     cv_path.touch()
