@@ -12,6 +12,7 @@ features:
 
 ## Train model
 train:
+	python src/exp_001.py train
 
 ## Predict
 predict:

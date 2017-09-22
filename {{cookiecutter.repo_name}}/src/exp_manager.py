@@ -37,6 +37,7 @@ class ExperimentManager:
 
     COLS = ["run_id", "start_time", "end_time", "delta_time",
             "train_score", "valid_score", "comments"]
+    TIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
 
     def __init__(self, root_dir, data_dir):
         self.root_dir = root_dir
@@ -49,26 +50,27 @@ class ExperimentManager:
 
     def run_experiment(self, run_id, comments, train, force=False):
         work_dir = self.root_dir / run_id
-        if not force and self.root_dir.exists():
+        if not force and work_dir.exists():
             message = f"{work_dir} exists!"
             raise ValueError(message)
 
-        log = get_logger(run_id, work_dir)
-        log.info(f"Creating directory at {work_dir}")
-        work_dir.mkdir(parents=True, exist_ok=False)
+        work_dir.mkdir(parents=True, exist_ok=True)
+        log = get_logger(run_id, work_dir / "log_test.txt")
 
-        start_time = datetime.utcnow()
-        log.info(f"Starting experiemnt {run_id} at {start_time}")
+        start_time = datetime.now()
+        start_time_str = start_time.strftime(self.TIME_FORMAT)
+        log.info(f"Starting experiemnt {run_id} at {start_time_str}")
 
         train_score, valid_score = train(work_dir, log)
 
-        end_time = datetime.utcnow()
+        end_time = datetime.now()
         delta_time = (end_time - start_time).seconds / 60
-        log.info(f"Finished experiment {run_id} at {end_time} delta_time={delta_time} min")
+        end_time_str = end_time.strftime(self.TIME_FORMAT)
+        log.info(f"Finished experiment {run_id} at {end_time_str} delta_time={delta_time} min")
         log.info(f"Results: train_score={train_score} valid_score={valid_score}")
 
-        self._save_results(self, run_id, train_score, valid_score,
-                           start_time, end_time, delta_time, comments)
+        self._save_results(run_id, train_score, valid_score,
+                           start_time_str, end_time_str, delta_time, comments)
         log.info(f"Experiment results {run_id} saved")
 
     def predict_with_experiment(self, run_id, predict, force=False):
@@ -79,16 +81,18 @@ class ExperimentManager:
         results_dir = work_dir / "results"
         if not force and results_dir.exists():
             raise ValueError(f"{results_dir} exists!")
-        log = get_logger(run_id, work_dir)
+        log = get_logger(run_id, work_dir / "log_predict.txt")
 
-        start_time = datetime.utcnow()
-        log.info(f"Starting prediction {run_id} at {start_time}")
+        start_time = datetime.now()
+        start_time_str = start_time.strftime(self.TIME_FORMAT)
+        log.info(f"Starting prediction {run_id} at {start_time_str}")
 
         predict(results_dir, log)
 
-        end_time = datetime.utcnow()
+        end_time = datetime.now()
         delta_time = (end_time - start_time).seconds / 60
-        log.info(f"Finished experiment {run_id} as {end_time} delta_time={delta_time} min")
+        end_time_str = end_time.strftime(self.TIME_FORMAT)
+        log.info(f"Finished prediction {run_id} as {end_time_str} delta_time={delta_time} min")
 
     def _save_results(self, run_id, train_score, valid_score,
                       start_time, end_time, delta_time, comments):

@@ -4,12 +4,12 @@ import click
 from exp_manager import exp_manager
 
 
-RUN_ID = __file__.split(".")[0]
+RUN_ID = "exp_001"
 COMMENTS = "Experiment one!"
 
 
 def _train(work_dir, log, seed):
-    pass
+    return 0.5, 0.8
 
 
 def _predict(results_dir, log):
@@ -26,7 +26,7 @@ def cli():
 @click.option("-f", "--force", is_flag=True)
 def train(seed, force):
     _train_now = partial(_train, seed=seed)
-    exp_manager.run_experiment(RUN_ID, COMMENTS, _train_now, force=True)
+    exp_manager.run_experiment(RUN_ID, COMMENTS, _train_now, force=force)
 
 
 @click.command()
