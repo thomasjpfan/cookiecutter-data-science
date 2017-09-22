@@ -1,33 +1,27 @@
 #################################################################################
 # COMMANDS                                                                      #
 #################################################################################
-.PHONY: clean clean_data features train predict
+.PHONY: clean_pyc clean_data features train predict requirements
 
 
 ## Generate biased clean data
 clean_data:
-	python src/clean.py
-
 
 ## Generate features
 features:
-	python src/features.py
 
+## Train model
 train:
-	python src/model0.py train --final
-	# python src/model1.py train
 
+## Predict
 predict:
-	python src/model0.py predict final
-	# python src/model1.py predict 2017-06-07T22:05:21.341838
 
 ## Install Python Dependencies
 requirements:
 	pip install -r requirements.txt
 
-
 ## Delete all compiled Python files
-clean:
+clean_pyc:
 	find . -name "*.pyc" -exec rm {} \;
 
 
