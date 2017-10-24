@@ -24,15 +24,6 @@ def get_logger(name, log_fn):
     return logger
 
 
-def get_data_dir(self, data_type):
-    if data_type == "root":
-        return self.data_dir
-    elif data_type in ["external", "interim", "processed", "raw"]:
-        return self.data_dir / data_type
-    else:
-        raise RuntimeError("Invalid data_type for dir")
-
-
 class ExperimentManager:
 
     COLS = ["run_id", "start_time", "end_time", "delta_time",
@@ -61,7 +52,7 @@ class ExperimentManager:
         start_time_str = start_time.strftime(self.TIME_FORMAT)
         log.info(f"Starting experiemnt {run_id} at {start_time_str}")
 
-        train_score, valid_score = train(work_dir, log)
+        train_score, valid_score = train(work_dir, self.data_dir, log)
 
         end_time = datetime.now()
         delta_time = (end_time - start_time).seconds / 60
@@ -87,7 +78,7 @@ class ExperimentManager:
         start_time_str = start_time.strftime(self.TIME_FORMAT)
         log.info(f"Starting prediction {run_id} at {start_time_str}")
 
-        predict(results_dir, log)
+        predict(results_dir, self.data_dir, work_dir, log)
 
         end_time = datetime.now()
         delta_time = (end_time - start_time).seconds / 60
@@ -103,6 +94,3 @@ class ExperimentManager:
         with self.results_file.open("a") as f:
             writer = csv.DictWriter(f, fieldnames=self.COLS, quoting=csv.QUOTE_NONNUMERIC)
             writer.writerow(result)
-
-
-exp_manager = ExperimentManager(Path("artifacts"), Path("data"))

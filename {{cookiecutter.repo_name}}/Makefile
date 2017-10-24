@@ -16,6 +16,7 @@ train:
 
 ## Predict
 predict:
+	python src/exp_001.py predict
 
 ## Install Python Dependencies
 requirements:
