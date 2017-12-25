@@ -5,7 +5,7 @@ from pathlib import Path
 from exp_manager import ExperimentManager
 
 
-RUN_ID = "exp_001"
+RUN_ID = "001"
 COMMENTS = "Experiment one!"
 
 
@@ -14,7 +14,7 @@ def _train(work_dir, data_dir, log, seed):
 
 
 def _predict(results_dir, data_dir, work_dir, log):
-    pass
+    return 0.8
 
 
 @click.group()
