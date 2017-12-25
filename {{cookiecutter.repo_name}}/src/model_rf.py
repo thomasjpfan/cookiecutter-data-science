@@ -5,7 +5,7 @@ from pathlib import Path
 from exp_manager import ExperimentManager
 
 
-RUN_ID = "model_001"
+RUN_ID = "model_rf"
 COMMENTS = "Random Forest Model"
 
 
