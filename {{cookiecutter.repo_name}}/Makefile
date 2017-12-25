@@ -12,11 +12,11 @@ features:
 
 ## Train model
 train:
-	python src/exps/001.py train
+	python exps/001.py train
 
 ## Predict
 predict:
-	python src/exps/001.py predict
+	python exps/001.py predict
 
 ## Install Python Dependencies
 requirements:
