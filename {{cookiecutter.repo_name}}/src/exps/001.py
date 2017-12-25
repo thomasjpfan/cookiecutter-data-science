@@ -23,7 +23,7 @@ def cli(ctx):
     pass
 
 
-@click.command()
+@cli.command()
 @click.pass_context
 @click.option("--seed", type=int, default=42)
 @click.option("-f", "--force", is_flag=True)
@@ -34,7 +34,7 @@ def train(ctx, seed, force):
     exp_manager.run_experiment(RUN_ID, COMMENTS, _train_now, force=force)
 
 
-@click.command()
+@cli.command()
 @click.pass_context
 @click.option("-f", "--force", is_flag=True)
 def predict(ctx, force):

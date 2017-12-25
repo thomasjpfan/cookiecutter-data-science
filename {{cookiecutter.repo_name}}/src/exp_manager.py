@@ -1,22 +1,21 @@
 """Manages projects"""
 from datetime import datetime
-from pathlib import Path
 import logging
 import csv
 
 
-def get_logger(name, log_fn=None):
+def get_logger(name, log_fn=None, level=logging.DEBUG):
     logger = logging.getLogger(name)
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(level)
 
     stream_handler = logging.StreamHandler()
-    stream_handler.setLevel(logging.DEBUG)
+    stream_handler.setLevel(level)
     stream_handler.setFormatter(logging.Formatter('=> %(message)s'))
     logger.addHandler(stream_handler)
 
     if log_fn:
         file_handler = logging.FileHandler(log_fn)
-        file_handler.setLevel(logging.DEBUG)
+        file_handler.setLevel(level)
         file_handler.setFormatter(logging.Formatter('=> %(message)s'))
         logger.addHandler(file_handler)
 
