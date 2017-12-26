@@ -1,5 +1,6 @@
 """Manages projects"""
 from datetime import datetime
+import pandas as pd
 import logging
 import csv
 
@@ -85,10 +86,14 @@ class ExperimentManager:
 
     def _save_results(self, run_id, train_score, valid_score,
                       start_time, end_time, delta_time, comments):
-        result = {"run_id": run_id, "start_time": f"{start_time}",
-                  "end_time": f"{end_time}", "delta_time": delta_time,
+        result = {"start_time": start_time,
+                  "end_time": end_time, "delta_time": delta_time,
                   "train_score": train_score, "valid_score": valid_score,
                   "comments": comments}
-        with self.results_file.open("a") as f:
-            writer = csv.DictWriter(f, fieldnames=self.COLS, quoting=csv.QUOTE_NONNUMERIC)
-            writer.writerow(result)
+        with self.results_file.open("r") as f:
+            df = pd.read_csv(f, index_col="run_id")
+            new_row = pd.Series(result)
+            df.loc[run_id] = new_row
+
+        with self.results_file.open("w") as f:
+            df.to_csv(f)
