@@ -48,14 +48,14 @@ class ExperimentManager:
 
         start_time = datetime.now()
         start_time_str = start_time.strftime(self.TIME_FORMAT)
-        log.info(f"Starting experiemnt {run_id} at {start_time_str}")
+        log.info(f"Starting {run_id} at {start_time_str}")
 
         train_score, valid_score = train(work_dir, self.data_dir, log)
 
         end_time = datetime.now()
         delta_time = (end_time - start_time).seconds / 60
         end_time_str = end_time.strftime(self.TIME_FORMAT)
-        log.info(f"Finished experiment {run_id} at {end_time_str} delta_time={delta_time} min")
+        log.info(f"Finished {run_id} at {end_time_str} delta_time={delta_time} min")
         log.info(f"Results: train_score={train_score} valid_score={valid_score}")
 
         self._save_results(run_id, train_score, valid_score,
