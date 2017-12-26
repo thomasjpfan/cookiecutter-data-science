@@ -5,7 +5,7 @@ from pathlib import Path
 from exp_manager import ExperimentManager
 
 
-RUN_ID = "001"
+RUN_ID = "exp_001"
 COMMENTS = "Experiment one!"
 
 
