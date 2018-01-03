@@ -25,17 +25,18 @@ def get_logger(name, log_fn=None, level=logging.DEBUG):
 
 class ExperimentManager:
 
-    COLS = ["run_id", "start_time", "end_time", "delta_time",
-            "train_score", "valid_score", "comments"]
     TIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
 
-    def __init__(self, root_dir, data_dir):
+    def __init__(self, root_dir, data_dir, score_type="score"):
         self.root_dir = root_dir
         self.data_dir = data_dir
         self.results_file = root_dir / "results.csv"
+        self.score_type = score_type
+        cols = ["run_id", "start_time", "end_time", "delta_time",
+                f"train_{score_type}", f"valid_{score_type}", "comments"]
         if not self.results_file.exists():
             with self.results_file.open("w") as f:
-                writer = csv.DictWriter(f, fieldnames=self.COLS, quoting=csv.QUOTE_NONNUMERIC)
+                writer = csv.DictWriter(f, fieldnames=cols, quoting=csv.QUOTE_NONNUMERIC)
                 writer.writeheader()
 
     def run_experiment(self, run_id, comments, train, force=False):
@@ -57,7 +58,9 @@ class ExperimentManager:
         delta_time = (end_time - start_time).seconds / 60
         end_time_str = end_time.strftime(self.TIME_FORMAT)
         log.info(f"Finished {run_id} at {end_time_str} delta_time={delta_time} min")
-        log.info(f"Results: train_score={train_score} valid_score={valid_score}")
+        log.info(
+            f"Results: train_{self.score_type}={train_score} "
+            f"valid_{self.score_type}={valid_score}")
 
         self._save_results(run_id, train_score, valid_score,
                            start_time_str, end_time_str, delta_time, comments)
@@ -88,7 +91,8 @@ class ExperimentManager:
                       start_time, end_time, delta_time, comments):
         result = {"start_time": start_time,
                   "end_time": end_time, "delta_time": delta_time,
-                  "train_score": train_score, "valid_score": valid_score,
+                  f"train_{self.score_type}": train_score,
+                  f"valid_{self.score_type}": valid_score,
                   "comments": comments}
         with self.results_file.open("r") as f:
             df = pd.read_csv(f, index_col="run_id")
