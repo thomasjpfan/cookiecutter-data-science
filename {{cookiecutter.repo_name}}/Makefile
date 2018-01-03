@@ -1,12 +1,11 @@
 #################################################################################
 # COMMANDS                                                                      #
 #################################################################################
-.PHONY: clean_pyc clean_data features train predict requirements
+.PHONY: clean_pyc clean_data train predict requirements
 
 
 ## Generate biased clean data
 clean_data:
-
 
 ## Train model
 train:
