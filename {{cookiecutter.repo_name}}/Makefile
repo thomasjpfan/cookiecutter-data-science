@@ -7,8 +7,6 @@
 ## Generate biased clean data
 clean_data:
 
-## Generate features
-features:
 
 ## Train model
 train:
