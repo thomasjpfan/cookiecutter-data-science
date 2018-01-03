@@ -45,7 +45,7 @@ class ExperimentManager:
             raise ValueError(message)
 
         work_dir.mkdir(parents=True, exist_ok=True)
-        log = get_logger(run_id, work_dir / "log_test.txt")
+        log = get_logger(run_id, work_dir / "log.txt")
 
         start_time = datetime.now()
         start_time_str = start_time.strftime(self.TIME_FORMAT)
