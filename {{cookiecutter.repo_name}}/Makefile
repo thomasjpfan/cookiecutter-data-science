@@ -6,14 +6,15 @@
 
 ## Generate biased clean data
 clean_data:
+	python src/clean.py
 
 ## Train model
 train:
-	python src/exp_001.py train
+	python src/exp_example.py train
 
 ## Predict
 predict:
-	python src/exp_001.py predict
+	python src/exp_example.py predict with run_dir=FOLDERNAME
 
 ## Install Python Dependencies
 requirements:

@@ -1,6 +1,7 @@
-# exclude data dir
+.envrc
 
-/data/
+# exclude data dir
+data/
 ###Python###
 
 # Byte-compiled / optimized / DLL files
