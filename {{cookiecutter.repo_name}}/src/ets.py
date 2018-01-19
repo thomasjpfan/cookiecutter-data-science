@@ -5,9 +5,9 @@ import click
 
 
 @click.command()
-def clean():
+def ets():
     pass
 
 
 if __name__ == '__main__':
-    clean()
+    ets()
