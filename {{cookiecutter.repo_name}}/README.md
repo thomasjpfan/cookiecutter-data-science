@@ -6,7 +6,7 @@
 
 1. Get data
 
-1. Create and source .envrc if you want to use mongodb
+2. Create and source .envrc if you want to use mongodb
 
 ```bash
 # .envrc
@@ -19,31 +19,31 @@ source .envrc
 pip install pymongo
 ```
 
-1. Install requirements
+3. Install requirements
 
 ```bash
 make requirements
 ```
 
-1. Clean data
+4. Extract Transform Save
 
 ```bash
-make clean_data
+make ets
 ```
 
-1. Create features
+5. Create features
 
 ```bash
 make features
 ```
 
-1. Train model(s)
+6. Train model(s)
 
 ```bash
 make train
 ```
 
-1. Predict
+7. Predict
 
 ```bash
 make predict
