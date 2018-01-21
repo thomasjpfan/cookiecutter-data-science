@@ -1,12 +1,28 @@
 # {{ cookiecutter.project_name }}
 
+Insert description of project.
 
+## Usage
 
-## Instructions
+1. Install requirements
+1. Download and uncompress data
+1. Extract, transform, and save data
+1. Create features
+1. Train model
+1. Make predictions
 
-1. Get data
+```bash
+make requirements
+make download_extract
+make ets
+make features
+make train
+make predict
+```
 
-2. Create and source .envrc if you want to use mongodb
+## Using MongoDB to store experiment results
+
+Add a `.envrc` file and use `direnv`!
 
 ```bash
 # .envrc
@@ -17,34 +33,4 @@ export MONGODB_NAME=boo
 ```bash
 source .envrc
 pip install pymongo
-```
-
-3. Install requirements
-
-```bash
-make requirements
-```
-
-4. Extract Transform Save
-
-```bash
-make ets
-```
-
-5. Create features
-
-```bash
-make features
-```
-
-6. Train model(s)
-
-```bash
-make train
-```
-
-7. Predict
-
-```bash
-make predict
 ```

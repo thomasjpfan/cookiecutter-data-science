@@ -1,7 +1,7 @@
 #################################################################################
 # COMMANDS                                                                      #
 #################################################################################
-.PHONY: clean_pyc ets train predict requirements
+.PHONY: clean_pyc ets train predict requirements dl_extract
 
 
 ## Extract Transform Save
@@ -24,9 +24,10 @@ requirements:
 clean_pyc:
 	find . -name "*.pyc" -exec rm {} \;
 
-#################################################################################
-# File Targets
-#################################################################################
+## Download and extract data
+dl_extract:
+	./dl_extract.sh
+
 
 #################################################################################
 # Self Documenting Commands                                                     #
