@@ -34,6 +34,14 @@ Make Predictions
 python src/exp_example.py predict with run_dir=FOLDERNAME
 ```
 
+## Jupyter Notebook
+
+To run the jupyter notebooks, set `PYTHONPATH` to include the `src` directory:
+
+```bash
+PYTHONPATH=$PWD/src jupyter notebook --no-browser --port=8999
+```
+
 ## Using MongoDB to store experiment results
 
 Add a `.envrc` file and use `direnv`!
