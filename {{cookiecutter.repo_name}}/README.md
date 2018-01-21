@@ -4,20 +4,34 @@ Insert description of project.
 
 ## Usage
 
-1. Install requirements
-1. Download and uncompress data
-1. Extract, transform, and save data
-1. Create features
-1. Train model
-1. Make predictions
+Install requirements
 
 ```bash
-make requirements
-make dl_extract
-make ets
-make features
-make train
-make predict
+pip install -r requirements.txt
+```
+
+Download and uncompress data
+
+```bash
+./dl_extract.sh
+```
+
+Extract, transform, and save data.
+
+```bash
+python src/ets.py
+```
+
+Train Model
+
+```bash
+python src/exp_example.py train
+```
+
+Make Predictions
+
+```bash
+python src/exp_example.py predict with run_dir=FOLDERNAME
 ```
 
 ## Using MongoDB to store experiment results
