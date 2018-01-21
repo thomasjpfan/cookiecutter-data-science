@@ -13,7 +13,7 @@ Insert description of project.
 
 ```bash
 make requirements
-make download_extract
+make dl_extract
 make ets
 make features
 make train
