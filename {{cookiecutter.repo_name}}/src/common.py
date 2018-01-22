@@ -68,15 +68,10 @@ def add_common_config(exp, record_local=True):
 
 def generate_run_dir(run_id):
 
-    if run_id:
-        possible_dir = os.path.join('artifacts', run_id)
-        if os.path.exists(possible_dir):
-            return possible_dir
-
-    run_dir = os.path.join('artifacts', datetime.datetime.utcnow().strftime(TIME_FORMAT))
-    if os.path.exists(run_dir):
-        raise EnvironmentError(f"Run dir: {run_dir} already exists")
-    os.mkdir(run_dir)
+    run_id = run_id or datetime.datetime.utcnow().strftime(TIME_FORMAT)
+    run_dir = os.path.join('artifacts', run_id)
+    if not os.path.exists(run_dir):
+        os.mkdir(run_dir)
 
     return run_dir
 
@@ -84,8 +79,8 @@ def generate_run_dir(run_id):
 def setup_run_dir_predict(run_id, config, log):
 
     run_dir = os.path.join('artifacts', run_id)
-    if not run_dir or not os.path.exists(run_dir):
-        raise EnvironmentError(f"run_dir needs to be set to predict")
+    if not run_id or not os.path.exists(run_dir):
+        raise EnvironmentError(f"run_id needs to be set to predict")
     config['run_dir'] = run_dir
 
     # setup file logging
