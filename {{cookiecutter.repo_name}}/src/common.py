@@ -88,6 +88,8 @@ def setup_run_dir_predict(run_id, config, log):
     file_hander = get_log_file_handler(log_fn)
     log.addHandler(file_hander)
 
+    return run_dir
+
 
 def setup_run_dir_train(run_id, config, log):
 
@@ -98,6 +100,8 @@ def setup_run_dir_train(run_id, config, log):
     log_fn = os.path.join(run_dir, 'log_train.txt')
     file_hander = get_log_file_handler(log_fn)
     log.addHandler(file_hander)
+
+    return run_dir
 
 
 def addMongoDBFromENV(exp):

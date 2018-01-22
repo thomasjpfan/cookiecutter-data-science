@@ -25,13 +25,13 @@ python src/features.py
 Train Model
 
 ```bash
-python src/exp_example.py train with run_id=latest
+python src/exp_random.py train with run_id=latest
 ```
 
 Make Predictions
 
 ```bash
-python src/exp_example.py predict with run_id=latest
+python src/exp_random.py predict with run_id=latest
 ```
 
 ## Jupyter Notebook
