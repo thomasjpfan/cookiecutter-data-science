@@ -68,9 +68,10 @@ def add_common_config(exp, record_local=True):
 
 def generate_run_dir(run_id):
 
-    possible_dir = os.path.join('artifacts', run_id)
-    if run_id and os.path.exists(possible_dir):
-        return possible_dir
+    if run_id:
+        possible_dir = os.path.join('artifacts', run_id)
+        if os.path.exists(possible_dir):
+            return possible_dir
 
     run_dir = os.path.join('artifacts', datetime.datetime.utcnow().strftime(TIME_FORMAT))
     if os.path.exists(run_dir):

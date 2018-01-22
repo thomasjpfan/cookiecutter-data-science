@@ -16,10 +16,10 @@ Download and uncompress data
 ./dl_extract.sh
 ```
 
-Extract, transform, and save data.
+Create features
 
 ```bash
-python src/ets.py
+python src/features.py
 ```
 
 Train Model
