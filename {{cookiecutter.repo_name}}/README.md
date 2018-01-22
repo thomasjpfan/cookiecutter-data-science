@@ -31,7 +31,7 @@ python src/exp_example.py train
 Make Predictions
 
 ```bash
-python src/exp_example.py predict with run_dir=FOLDERNAME
+python src/exp_example.py predict with run_id=RUN_ID
 ```
 
 ## Jupyter Notebook
