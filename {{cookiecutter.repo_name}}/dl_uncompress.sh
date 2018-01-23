@@ -10,7 +10,6 @@ dl() {
 	fi
 
 	echo "Downloading $filename"
-	cd data/raw
 	# Download script
 }
 
@@ -26,3 +25,5 @@ extract() {
 	echo "Extracting $input to $output"
 	# Extract script
 }
+
+cd data/raw
