@@ -1,5 +1,14 @@
 """File Locations"""
+import os
 
-RAW_FILES = {
 
-}
+class RawFiles:
+
+    def __init__(self, data_dir):
+        pass
+
+
+class ProcessFiles:
+
+    def __init__(self, data_dir):
+        pass
