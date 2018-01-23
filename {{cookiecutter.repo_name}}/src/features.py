@@ -5,9 +5,9 @@ import click
 
 
 @click.command()
-def ets():
+def features():
     pass
 
 
 if __name__ == '__main__':
-    ets()
+    features()

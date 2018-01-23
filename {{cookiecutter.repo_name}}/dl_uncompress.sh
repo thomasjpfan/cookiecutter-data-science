@@ -2,7 +2,7 @@
 set -eo pipefail
 
 dl() {
-	local filename="data/raw/$1"
+	local filename="$1"
 
 	if [ -f "$filename" ]; then
 		echo "$filename already downloaded"
@@ -14,8 +14,8 @@ dl() {
 }
 
 extract() {
-	local input="data/raw/$1"
-	local output="data/raw/$2"
+	local input="$1"
+	local output="$2"
 
 	if [ -f "$output" ]; then
 		echo "$output already extracted"
@@ -24,6 +24,7 @@ extract() {
 
 	echo "Extracting $input to $output"
 	# Extract script
+	unzip "$input"
 }
 
 cd data/raw
