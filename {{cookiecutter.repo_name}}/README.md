@@ -4,34 +4,34 @@ Insert description of project.
 
 ## Usage
 
-Install requirements
+1. Install requirements
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Download and uncompress data
+2. Download and uncompress data
 
 ```bash
 ./dl_extract.sh
 ```
 
-Create features
+3. Create features
 
 ```bash
 python src/features.py
 ```
 
-Train Model
+4. Train Model
 
 ```bash
-python src/exp_random.py train with run_id=latest
+python src/exp_constant.py train with run_id=latest
 ```
 
-Make Predictions
+5. Make Predictions
 
 ```bash
-python src/exp_random.py predict with run_id=latest
+python src/exp_constant.py predict with run_id=latest
 ```
 
 ## Jupyter Notebook

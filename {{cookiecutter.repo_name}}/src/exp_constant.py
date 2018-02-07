@@ -12,10 +12,12 @@ import numpy as np
 from common import (
     add_common_config, setup_run_dir_predict, setup_run_dir_train
 )
+from files import RawFiles
 
-exp = Experiment("Random_model")
+exp = Experiment("Constant_Model")
 add_common_config(exp, record_local=True)
-RANDOM_MODEL_FN = "random_model.pkl"
+rf = RawFiles("data")
+RANDOM_MODEL_FN = "constant_model.pkl"
 PREDICT_FN = "predictions.npy"
 
 
