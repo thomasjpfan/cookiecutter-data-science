@@ -17,11 +17,11 @@ from files import RawFiles
 exp = Experiment("Constant_Model")
 add_common_config(exp, record_local=True)
 rf = RawFiles("data")
-RANDOM_MODEL_FN = "constant_model.pkl"
+CONSTANT_MODEL_FN = "constant_model.pkl"
 PREDICT_FN = "predictions.npy"
 
 
-class RandomModel(BaseEstimator):
+class ConstantModel(BaseEstimator):
 
     def fit(self, X, y=None):
         self.constant_ = np.mean(y)
@@ -35,14 +35,14 @@ class RandomModel(BaseEstimator):
 @exp.command
 def predict(run_id, _config, _log):
     run_dir = setup_run_dir_predict(run_id, _config, _log)
-    model_fn = os.path.join(run_dir, RANDOM_MODEL_FN)
+    model_fn = os.path.join(run_dir, CONSTANT_MODEL_FN)
     predict_fn = os.path.join(run_dir, PREDICT_FN)
 
     _log.info("Starting prediction, run_dir: %s", run_dir)
     # Prediction task
     X = np.random.rand(200)
-    random_model = joblib.load(model_fn)
-    y_predict = random_model.predict(X)
+    constant_model = joblib.load(model_fn)
+    y_predict = constant_model.predict(X)
     np.save(predict_fn, y_predict)
 
     _log.info("Finished prediction, run_dir: %s", run_dir)
@@ -56,13 +56,13 @@ def train(run_id, _config, _log, _run):
     X, y = np.random.rand(200), np.random.randint(0, 2, 200)
 
     X_train, X_test, y_train, y_test = train_test_split(X, y)
-    random_model = RandomModel()
-    random_model.fit(X_train, y_train)
-    train_score = log_loss(y_train, random_model.predict(X_train))
-    test_score = log_loss(y_test, random_model.predict(X_test))
+    constant_model = ConstantModel()
+    constant_model.fit(X_train, y_train)
+    train_score = log_loss(y_train, constant_model.predict(X_train))
+    test_score = log_loss(y_test, constant_model.predict(X_test))
 
-    model_fn = os.path.join(run_dir, RANDOM_MODEL_FN)
-    joblib.dump(random_model, model_fn)
+    model_fn = os.path.join(run_dir, CONSTANT_MODEL_FN)
+    joblib.dump(constant_model, model_fn)
 
     _log.info("Finished training, run_dir: % s", run_dir)
     # valid score/error, train score/error
