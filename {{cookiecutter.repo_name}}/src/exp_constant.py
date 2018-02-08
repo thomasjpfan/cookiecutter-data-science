@@ -18,19 +18,19 @@ exp = Experiment("Constant_Model")
 add_common_config(exp, record_local=True)
 rf = RawFiles("data")
 CONSTANT_MODEL_FN = "constant_model.pkl"
-VAL_TRAIN_LOSS = "val_train_loss.npy"
+VAL_TRAIN_LOSS = "val_train_loss.txt"
 PREDICT_FN = "predictions.npy"
 
 
 class ConstantModel(BaseEstimator):
 
     def fit(self, X, y=None):
-        self.constant_ = np.mean(y)
+        self.constant_ = np.mean(y, axis=0).reshape(1, -1)
         return self
 
     def predict(self, X):
         check_is_fitted(self, 'constant_')
-        return np.repeat(self.constant_, X.shape[0])
+        return np.repeat(self.constant_, X.shape[0], axis=0)
 
 
 @exp.command
@@ -67,7 +67,7 @@ def train(run_id, _config, _log, _run):
 
     val_train_loss_fn = os.path.join(run_dir, VAL_TRAIN_LOSS)
     val_train_loss = np.array([test_score, train_score])
-    np.save(val_train_loss_fn, val_train_loss)
+    np.savetxt(val_train_loss_fn, val_train_loss)
 
     _log.info("Finished training, run_dir: % s", run_dir)
     # valid score/error, train score/error
