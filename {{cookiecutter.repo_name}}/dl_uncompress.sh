@@ -13,7 +13,7 @@ dl() {
 	# Download script
 }
 
-extract() {
+extract_single() {
 	local input="$1"
 	local output="$2"
 
@@ -25,6 +25,20 @@ extract() {
 	echo "Extracting $input to $output"
 	# Extract script
 	unzip "$input"
+}
+
+extract_folder() {
+	local input="$1"
+	local output="$2"
+
+	if [ -f "$output" ]; then
+		echo "$output already extracted"
+		return
+	fi
+
+	echo "Extracting $input to $output"
+	# Extract script
+	unzip "$input" -d "$output"
 }
 
 cd data/raw
