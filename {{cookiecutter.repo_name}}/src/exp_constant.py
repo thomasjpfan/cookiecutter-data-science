@@ -18,6 +18,7 @@ exp = Experiment("Constant_Model")
 add_common_config(exp, record_local=True)
 rf = RawFiles("data")
 CONSTANT_MODEL_FN = "constant_model.pkl"
+VAL_TRAIN_LOSS = "val_train_loss.npy"
 PREDICT_FN = "predictions.npy"
 
 
@@ -63,6 +64,10 @@ def train(run_id, _config, _log, _run):
 
     model_fn = os.path.join(run_dir, CONSTANT_MODEL_FN)
     joblib.dump(constant_model, model_fn)
+
+    val_train_loss_fn = os.path.join(run_dir, VAL_TRAIN_LOSS)
+    val_train_loss = np.array([test_score, train_score])
+    np.save(val_train_loss_fn, val_train_loss)
 
     _log.info("Finished training, run_dir: % s", run_dir)
     # valid score/error, train score/error
