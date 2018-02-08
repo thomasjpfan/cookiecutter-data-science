@@ -3,7 +3,7 @@ import os
 
 from sacred import Experiment
 from sklearn.base import BaseEstimator
-from sklearn.utils.validation import check_is_fitted
+from sklearn.utils.validation import check_is_fitted, check_array
 from sklearn.externals import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import log_loss
@@ -25,6 +25,7 @@ PREDICT_FN = "predictions.npy"
 class ConstantModel(BaseEstimator):
 
     def fit(self, X, y=None):
+        y = check_array(y, copy=True, ensure_2d=False)
         self.constant_ = np.mean(y, axis=0).reshape(1, -1)
         return self
 
