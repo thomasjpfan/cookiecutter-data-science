@@ -2,7 +2,7 @@
 import os
 
 from sacred import Experiment
-from sklearn.base import BaseEstimator
+from sklearn.base import BaseEstimator, RegressorMixin
 from sklearn.utils.validation import check_is_fitted, check_array
 from sklearn.externals import joblib
 from sklearn.model_selection import train_test_split
@@ -22,7 +22,7 @@ VAL_TRAIN_LOSS = "val_train_loss.txt"
 PREDICT_FN = "predictions.npy"
 
 
-class ConstantModel(BaseEstimator):
+class ConstantModel(BaseEstimator, RegressorMixin):
 
     def fit(self, X, y=None):
         y = check_array(y, copy=True, ensure_2d=False)
@@ -30,6 +30,10 @@ class ConstantModel(BaseEstimator):
         return self
 
     def predict(self, X):
+        check_is_fitted(self, 'constant_')
+        return np.repeat(self.constant_, X.shape[0], axis=0)
+
+    def predict_proba(self, X):
         check_is_fitted(self, 'constant_')
         return np.repeat(self.constant_, X.shape[0], axis=0)
 
