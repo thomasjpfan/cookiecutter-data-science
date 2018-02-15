@@ -14,5 +14,5 @@ conda install cookiecutter
 ## To start a new project
 
 ```bash
-cookiecutter https://github.com/thomasjpfan/cookiecutter-my-ds
+cookiecutter https://github.com/thomasjpfan/cookiecutter-data-science
 ```

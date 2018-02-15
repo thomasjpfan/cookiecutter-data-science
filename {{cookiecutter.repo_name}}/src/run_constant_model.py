@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """Constant Model"""
 import os
 
@@ -9,7 +11,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import log_loss
 import numpy as np
 
-from common import (
+from exp_utils import (
     add_common_config, setup_run_dir_predict, setup_run_dir_train
 )
 from files import RawFiles

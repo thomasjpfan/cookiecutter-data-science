@@ -1,4 +1,4 @@
-"""Common Functions"""
+"""Experiment Setup Utils"""
 import datetime
 import logging
 import csv
@@ -55,10 +55,6 @@ class CSVObserver(RunObserver):
 
 def add_common_config(exp, record_local=True):
     exp.add_config(
-        raw_dir="data/raw",
-        interim_dir="data/interim",
-        external_dir="data/external",
-        processed_dir="data/processed",
         run_id=None,
         record_local=record_local,
     )
