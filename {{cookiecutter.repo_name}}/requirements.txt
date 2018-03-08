@@ -1,3 +1,5 @@
 click
 pandas
 sacred
+sklearn
+scipy

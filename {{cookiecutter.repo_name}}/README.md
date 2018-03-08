@@ -39,12 +39,14 @@ python src/run_constant_model.py predict with run_id=latest
 To run the jupyter notebooks, set `PYTHONPATH` to include the `src` directory:
 
 ```bash
-PYTHONPATH=$PWD/src jupyter notebook --no-browser --port=8999
+jupyter notebook --no-browser --port=8999
 ```
 
-## Using MongoDB to store experiment results
+## Observing experiments
 
-Add a `.envrc` file and use `direnv`!
+### Using MongoDB to store experiment results
+
+Install mongodb: `pip install pymongo`. Then add a `.envrc` file and use `direnv`!
 
 ```bash
 # .envrc
@@ -52,7 +54,14 @@ export MONGODB_URL=mongodb://test:abc@localhost:27017/boo?authMechanism=SCRAM-SH
 export MONGODB_NAME=boo
 ```
 
+### Using Pushover for notifications
+
+Install notifiers: `pip install notifiers`. Add notifier env vars to `.envrc`:
+
 ```bash
-source .envrc
-pip install pymongo
+# .envrc
+export NOTIFIERS_PUSHOVER_TOKEN=FOO
+export NOTIFIERS_PUSHOVER_USER=BAR
 ```
+
+Logs with level `INFO` and higher will be logged to pushover.

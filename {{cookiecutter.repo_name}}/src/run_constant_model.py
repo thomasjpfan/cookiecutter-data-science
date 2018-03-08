@@ -20,7 +20,7 @@ exp = Experiment("Constant_Model")
 add_common_config(exp, record_local=True)
 rf = RawFiles("data")
 CONSTANT_MODEL_FN = "constant_model.pkl"
-VAL_TRAIN_LOSS = "val_train_loss.txt"
+VAL_TRAIN_SCORE = "val_train_score.txt"
 PREDICT_FN = "predictions.npy"
 
 
@@ -46,21 +46,21 @@ def predict(run_id, _config, _log):
     model_fn = os.path.join(run_dir, CONSTANT_MODEL_FN)
     predict_fn = os.path.join(run_dir, PREDICT_FN)
 
-    _log.info("Starting prediction, run_dir: %s", run_dir)
+    _log.info(f"Start prediction, run_id: {run_id}")
     # Prediction task
     X = np.random.rand(200)
     constant_model = joblib.load(model_fn)
     y_predict = constant_model.predict(X)
     np.save(predict_fn, y_predict)
 
-    _log.info("Finished prediction, run_dir: %s", run_dir)
+    _log.info(f"Finished prediction, run_id: {run_id}")
 
 
 @exp.automain
 def train(run_id, _config, _log, _run):
 
     run_dir = setup_run_dir_train(run_id, _config, _log)
-    _log.info("Starting training, run_dir: %s", run_dir)
+    _log.info(f"Start training, run_id: {run_id}")
     X, y = np.random.rand(200), np.random.randint(0, 2, 200)
 
     X_train, X_test, y_train, y_test = train_test_split(X, y)
@@ -73,10 +73,12 @@ def train(run_id, _config, _log, _run):
     joblib.dump(constant_model, model_fn)
     _run.add_artifact(model_fn)
 
-    val_train_loss_fn = os.path.join(run_dir, VAL_TRAIN_LOSS)
-    val_train_loss = np.array([test_score, train_score])
-    np.savetxt(val_train_loss_fn, val_train_loss)
+    val_train_score_fn = os.path.join(run_dir, VAL_TRAIN_SCORE)
+    val_train_score = np.array([test_score, train_score])
+    np.savetxt(val_train_score_fn, val_train_score)
 
-    _log.info("Finished training, run_dir: % s", run_dir)
+    _log.info(
+        f"Finished training, run_id: {run_id}, val_score: {test_score:0.6}, "
+        f"train_score: {train_score:0.6}")
     # valid score/error, train score/error
     return [test_score, train_score]

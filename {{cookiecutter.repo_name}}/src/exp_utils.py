@@ -14,13 +14,6 @@ LOGGING_FORMAT = '%(levelname)s: %(message)s'
 TIME_FORMAT = "r%Y%m%d_%H%M%S"
 
 
-def get_log_file_handler(log_fn, level=logging.INFO):
-    file_handler = logging.FileHandler(log_fn)
-    file_handler.setLevel(level)
-    file_handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
-    return file_handler
-
-
 class CSVObserver(RunObserver):
 
     COLS = ["run_id", "delta_time", "train", "valid"]
@@ -59,7 +52,7 @@ def add_common_config(exp, record_local=True):
         record_local=record_local,
     )
     exp.observers.append(CSVObserver())
-    addMongoDBFromENV(exp.observers)
+    add_monogodb_from_env(exp.observers)
     exp.captured_out_filter = apply_backspaces_and_linefeeds
 
 
@@ -84,6 +77,7 @@ def setup_run_dir_predict(run_id, config, log):
     log_fn = os.path.join(run_dir, 'log_predict.txt')
     file_hander = get_log_file_handler(log_fn)
     log.addHandler(file_hander)
+    add_pushover_handler_from_env(log)
 
     return run_dir
 
@@ -97,11 +91,12 @@ def setup_run_dir_train(run_id, config, log):
     log_fn = os.path.join(run_dir, 'log_train.txt')
     file_hander = get_log_file_handler(log_fn)
     log.addHandler(file_hander)
+    add_pushover_handler_from_env(log)
 
     return run_dir
 
 
-def addMongoDBFromENV(exp):
+def add_monogodb_from_env(exp):
     mongodb_url = os.environ.get("MONGODB_URL")
     mongodb_name = os.environ.get("MONGODB_NAME")
 
@@ -110,3 +105,21 @@ def addMongoDBFromENV(exp):
             url=mongodb_url,
             db_name=mongodb_name
         ))
+
+
+def add_pushover_handler_from_env(log):
+    pushover_user_token = os.environ.get("NOTIFIERS_PUSHOVER_USER")
+    pushover_token = os.environ.get("NOTIFIERS_PUSHOVER_TOKEN")
+
+    if pushover_user_token and pushover_token:
+        from notifiers.logging import NotificationHandler
+        h = NotificationHandler('pushover')
+        h.setLevel(logging.INFO)
+        log.addHandler(h)
+
+
+def get_log_file_handler(log_fn, level=logging.DEBUG):
+    file_handler = logging.FileHandler(log_fn)
+    file_handler.setLevel(level)
+    file_handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
+    return file_handler
