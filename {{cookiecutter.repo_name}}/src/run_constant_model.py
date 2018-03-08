@@ -71,6 +71,7 @@ def train(run_id, _config, _log, _run):
 
     model_fn = os.path.join(run_dir, CONSTANT_MODEL_FN)
     joblib.dump(constant_model, model_fn)
+    _run.add_artifact(model_fn)
 
     val_train_loss_fn = os.path.join(run_dir, VAL_TRAIN_LOSS)
     val_train_loss = np.array([test_score, train_score])

@@ -59,6 +59,7 @@ def add_common_config(exp, record_local=True):
         record_local=record_local,
     )
     exp.observers.append(CSVObserver())
+    addMongoDBFromENV(exp.observers)
     exp.captured_out_filter = apply_backspaces_and_linefeeds
 
 
