@@ -46,8 +46,8 @@ def train_hp(model_id, run_dir, _log, _run):
     rs = RandomizedSearchCV(Ridge(), params, n_iter=20, scoring='neg_mean_squared_error')
     rs.fit(X_train, y_train)
 
-    train_score = -mean_squared_error(y_train, rs.predict(X_train))
-    test_score = -mean_squared_error(y_test, rs.predict(X_test))
+    train_score = mean_squared_error(y_train, rs.predict(X_train))
+    test_score = mean_squared_error(y_test, rs.predict(X_test))
 
     _log.warning(
         f"Finished hyperparameter search model_id: {model_id}, test_score: "
@@ -67,11 +67,11 @@ def train(model_id, run_dir, _log, _run):
     linear_model = Ridge()
     valid_scores = cross_val_score(
         linear_model, X, y, scoring='neg_mean_squared_error', cv=5)
-    valid_score = np.mean(valid_scores)
+    valid_score = -np.mean(valid_scores)
     valid_score_std = np.std(valid_scores)
 
     linear_model.fit(X, y)
-    train_score = -mean_squared_error(y, linear_model.predict(X))
+    train_score = mean_squared_error(y, linear_model.predict(X))
 
     model_fn = os.path.join(run_dir, LINEAR_MODEL)
     joblib.dump(linear_model, model_fn)
