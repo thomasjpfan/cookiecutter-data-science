@@ -1,27 +1,32 @@
-"""Experiment Setup Utils"""
+'''Experiment Setup Utils'''
 import datetime
 import logging
 import csv
 import os
 
 import pandas as pd
+import numpy as np
 from sacred.observers.base import RunObserver
 from sacred.observers import MongoObserver
 from sacred.utils import apply_backspaces_and_linefeeds
 
 
-LOGGING_FORMAT = '%(levelname)s: %(message)s'
-TIME_FORMAT = "r%Y%m%d_%H%M%S"
+LOGGING_FORMAT = '> %(message)s'
+TIME_FORMAT = '%Y%m%d_%H%M%S'
+VAL_TRAIN_SCORE = "val_train_score.txt"
 
 
 class CSVObserver(RunObserver):
 
-    COLS = ["run_id", "delta_time", "train", "valid"]
+    COLS = ['model_id', 'delta_time', 'train', 'valid']
 
     def started_event(self, ex_info, command, host_info, start_time,
                       config, meta_info, _id):
+        if command != 'train':
+            self.record_local = False
+            return
         self.results_fn = 'artifacts/results.csv'
-        self.run_id = ex_info['name']
+        self.model_id = config['model_id']
         self.start_time = start_time
         self.record_local = config['record_local']
 
@@ -35,70 +40,67 @@ class CSVObserver(RunObserver):
         if not result or len(result) != 2 or not self.record_local:
             return
         d_time = (stop_time - self.start_time).total_seconds()
-        result = {"run_id": self.run_id, "delta_time": f"{d_time:.2f}",
-                  "train": result[1], "valid": result[0]}
+        result = {'model_id': self.model_id,
+                  'delta_time': f'{d_time:.2f}',
+                  'train': result[1], 'valid': result[0]}
         with open(self.results_fn, 'r') as f:
-            df = pd.read_csv(f, index_col="run_id")
+            df = pd.read_csv(f, index_col='model_id')
 
         new_row = pd.Series(result)
-        df.loc[self.run_id] = new_row
+        df.loc[self.model_id] = new_row
         with open(self.results_fn, 'w') as f:
             df.to_csv(f)
 
 
+class ArtifactObserver(RunObserver):
+
+    def __init__(self, logger):
+        self.logger = logger
+
+    def started_event(self, ex_info, command, host_info, start_time,
+                      config, meta_info, _id):
+        run_dir = config['run_dir']
+
+        if command == 'predict' and not os.path.exists(run_dir):
+            raise EnvironmentError(f'run_id must exist to predict')
+
+        os.makedirs(run_dir, exist_ok=True)
+        log_fn = os.path.join(run_dir, f'log_{command}.txt')
+        file_hander = get_log_file_handler(log_fn)
+
+        self.logger.addHandler(file_hander)
+        self.val_test_score_fn = os.path.join(run_dir, VAL_TRAIN_SCORE)
+
+    def completed_event(self, stop_time, result):
+        if not result or len(result) != 2:
+            return
+        val_train_score = np.array(result)
+        np.savetxt(self.val_test_score_fn, val_train_score)
+
+
 def add_common_config(exp, record_local=True):
     exp.add_config(
-        run_id=None,
+        run_id=datetime.datetime.utcnow().strftime(TIME_FORMAT),
         record_local=record_local,
+        name=exp.path
     )
+
+    @exp.config
+    def run_dir_config(name, run_id):
+        model_id = f"{name}_{run_id}"  # noqa
+        run_dir = os.path.join('artifacts', model_id)  # noqa
+
+    exp.logger = get_stream_logger(exp.path)
     exp.observers.append(CSVObserver())
+    exp.observers.append(ArtifactObserver(exp.logger))
     add_monogodb_from_env(exp.observers)
+    add_pushover_handler_from_env(exp.logger)
     exp.captured_out_filter = apply_backspaces_and_linefeeds
 
 
-def generate_run_dir(run_id):
-
-    run_id = run_id or datetime.datetime.utcnow().strftime(TIME_FORMAT)
-    run_dir = os.path.join('artifacts', run_id)
-    if not os.path.exists(run_dir):
-        os.mkdir(run_dir)
-
-    return run_dir
-
-
-def setup_run_dir_predict(run_id, config, log):
-
-    run_dir = os.path.join('artifacts', run_id)
-    if not run_id or not os.path.exists(run_dir):
-        raise EnvironmentError(f"run_id needs to be set to predict")
-    config['run_dir'] = run_dir
-
-    # setup file logging
-    log_fn = os.path.join(run_dir, 'log_predict.txt')
-    file_hander = get_log_file_handler(log_fn)
-    log.addHandler(file_hander)
-    add_pushover_handler_from_env(log)
-
-    return run_dir
-
-
-def setup_run_dir_train(run_id, config, log):
-
-    run_dir = generate_run_dir(run_id)
-    config['run_dir'] = run_dir
-
-    # setup file logging
-    log_fn = os.path.join(run_dir, 'log_train.txt')
-    file_hander = get_log_file_handler(log_fn)
-    log.addHandler(file_hander)
-    add_pushover_handler_from_env(log)
-
-    return run_dir
-
-
 def add_monogodb_from_env(exp):
-    mongodb_url = os.environ.get("MONGODB_URL")
-    mongodb_name = os.environ.get("MONGODB_NAME")
+    mongodb_url = os.environ.get('MONGODB_URL')
+    mongodb_name = os.environ.get('MONGODB_NAME')
 
     if mongodb_url and mongodb_name:
         exp.append(MongoObserver.create(
@@ -108,18 +110,31 @@ def add_monogodb_from_env(exp):
 
 
 def add_pushover_handler_from_env(log):
-    pushover_user_token = os.environ.get("NOTIFIERS_PUSHOVER_USER")
-    pushover_token = os.environ.get("NOTIFIERS_PUSHOVER_TOKEN")
+    pushover_user_token = os.environ.get('NOTIFIERS_PUSHOVER_USER')
+    pushover_token = os.environ.get('NOTIFIERS_PUSHOVER_TOKEN')
 
     if pushover_user_token and pushover_token:
         from notifiers.logging import NotificationHandler
         h = NotificationHandler('pushover')
-        h.setLevel(logging.INFO)
+        h.setLevel(logging.WARNING)
         log.addHandler(h)
 
 
-def get_log_file_handler(log_fn, level=logging.DEBUG):
+def get_log_file_handler(log_fn, level=logging.INFO):
     file_handler = logging.FileHandler(log_fn)
     file_handler.setLevel(level)
     file_handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
     return file_handler
+
+
+def get_stream_logger(name):
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.INFO)
+
+    stream_handler = logging.StreamHandler()
+    stream_handler.setLevel(logging.INFO)
+    stream_handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
+
+    logger.addHandler(stream_handler)
+
+    return logger

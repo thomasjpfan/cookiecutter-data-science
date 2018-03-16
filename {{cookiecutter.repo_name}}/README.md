@@ -25,13 +25,13 @@ python src/features.py
 4. Train Model
 
 ```bash
-python src/run_constant_model.py train with run_id=latest
+python src/run_linear_model.py train with run_id=latest
 ```
 
 5. Make Predictions
 
 ```bash
-python src/run_constant_model.py predict with run_id=latest
+python src/run_linear_model.py predict with run_id=latest
 ```
 
 ## Jupyter Notebook
