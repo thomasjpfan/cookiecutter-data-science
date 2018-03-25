@@ -3,6 +3,7 @@ import datetime
 import logging
 import csv
 import os
+import json
 
 import pandas as pd
 import numpy as np
@@ -78,12 +79,18 @@ class ArtifactObserver(RunObserver):
         np.savetxt(self.val_test_score_fn, val_train_score)
 
 
+def get_config():
+    with open("config.json", "r") as f:
+        return json.load(f)
+
+
 def add_common_config(exp, record_local=True):
     exp.add_config(
         run_id=datetime.datetime.utcnow().strftime(TIME_FORMAT),
         record_local=record_local,
         name=exp.path
     )
+    exp.add_config("config.json")
 
     @exp.config
     def run_dir_config(name, run_id):
