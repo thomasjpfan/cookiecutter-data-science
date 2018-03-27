@@ -34,14 +34,6 @@ python src/run_linear_model.py train with run_id=latest
 python src/run_linear_model.py predict with run_id=latest
 ```
 
-## Jupyter Notebook
-
-To run the jupyter notebooks, set `PYTHONPATH` to include the `src` directory:
-
-```bash
-jupyter notebook --no-browser --port=8999
-```
-
 ## Observing experiments
 
 ### Using MongoDB to store experiment results

@@ -7,6 +7,7 @@ Cookiecutter template for data science.
 - [Sacred](https://github.com/IDSIA/sacred) for running experiments
 - [Jupyter Notebooks](https://jupyter.org) for doing data analysis.
 - Stores runs in `artifacts` directory.
+- Stores notesbooks in `notebooks` directory.
 - Stores data in `data` directory.
 
 ## Usage
