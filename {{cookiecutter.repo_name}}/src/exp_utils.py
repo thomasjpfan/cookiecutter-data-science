@@ -1,4 +1,5 @@
 '''Experiment Setup Utils'''
+from collections import defaultdict
 import datetime
 import logging
 import csv
@@ -82,7 +83,17 @@ class ArtifactObserver(RunObserver):
 def get_config(root_dir="."):
     config_fn = os.path.join(root_dir, "config.json")
     with open(config_fn, "r") as f:
-        return json.load(f)
+        config = json.load(f)
+
+    if root_dir == ".":
+        return config
+
+    new_config = defaultdict(dict)
+    for folder_type, files in config.items():
+        for file, path in files.items():
+            new_config[folder_type][file] = os.path.join(root_dir, path)
+
+    return dict(new_config)
 
 
 def add_common_config(exp, record_local=True):
