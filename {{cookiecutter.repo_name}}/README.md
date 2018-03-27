@@ -4,33 +4,12 @@ Insert description of project.
 
 ## Usage
 
-1. Install requirements
-
 ```bash
 pip install -r requirements.txt
-```
-
-2. Download and uncompress data
-
-```bash
 ./dl_uncompress.sh
-```
-
-3. Create features
-
-```bash
+python src/process.py
 python src/features.py
-```
-
-4. Train Model
-
-```bash
 python src/run_linear_model.py train with run_id=latest
-```
-
-5. Make Predictions
-
-```bash
 python src/run_linear_model.py predict with run_id=latest
 ```
 
