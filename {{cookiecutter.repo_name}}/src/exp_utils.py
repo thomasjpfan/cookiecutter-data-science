@@ -79,8 +79,9 @@ class ArtifactObserver(RunObserver):
         np.savetxt(self.val_test_score_fn, val_train_score)
 
 
-def get_config():
-    with open("config.json", "r") as f:
+def get_config(root_dir="."):
+    config_fn = os.path.join(root_dir, "config.json")
+    with open(config_fn, "r") as f:
         return json.load(f)
 
 
