@@ -13,7 +13,7 @@ pip install -r requirements.txt
 2. Download and uncompress data
 
 ```bash
-./dl_extract.sh
+./dl_uncompress.sh
 ```
 
 3. Create features
