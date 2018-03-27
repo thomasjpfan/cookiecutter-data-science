@@ -3,6 +3,7 @@ set -eo pipefail
 
 dl() {
 	local filename="$1"
+	local url="$2"
 
 	if [ -f "$filename" ]; then
 		echo "$filename already downloaded"
