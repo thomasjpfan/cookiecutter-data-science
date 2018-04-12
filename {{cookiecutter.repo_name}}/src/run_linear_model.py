@@ -12,11 +12,9 @@ import numpy as np
 import scipy.stats
 
 from exp_utils import add_common_config
-from files import RawFiles
 
 exp = Experiment("linear_model")
 add_common_config(exp, record_local=True)
-rf = RawFiles("data")
 LINEAR_MODEL = "linear_model.pkl"
 PREDICT_FN = "predictions.npy"
 
@@ -59,12 +57,12 @@ def train_hp(model_id, run_dir, _log, _run):
 
 
 @exp.automain
-def train(model_id, run_dir, _log, _run):
+def train(model_id, run_dir, parameters, _log, _run):
 
     X = np.random.rand(300).reshape(-1, 1)
     y = 4 * X + np.random.randn(300, 1) * 0.5
 
-    linear_model = Ridge()
+    linear_model = Ridge(parameters['ridge']['alpha'])
     valid_scores = cross_val_score(
         linear_model, X, y, scoring='neg_mean_squared_error', cv=5)
     valid_score = -np.mean(valid_scores)

@@ -1,0 +1,11 @@
+---
+files:
+  raw:
+    train: data/raw/train.csv
+    test: data/raw/test.csv
+  processed:
+    train: data/processed/train.csv
+    test: data/processed/test.csv
+parameters:
+  ridge:
+    alpha: 0.9

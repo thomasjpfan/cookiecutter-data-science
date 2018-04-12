@@ -1,11 +1,11 @@
 '''Experiment Setup Utils'''
-from collections import defaultdict
+from contextlib import suppress
 import datetime
 import logging
 import csv
 import os
-import json
 
+import yaml
 import pandas as pd
 import numpy as np
 from sacred.observers.base import RunObserver
@@ -81,19 +81,20 @@ class ArtifactObserver(RunObserver):
 
 
 def get_config(root_dir="."):
-    config_fn = os.path.join(root_dir, "config.json")
+    config_fn = os.path.join(root_dir, "config.yaml")
     with open(config_fn, "r") as f:
-        config = json.load(f)
+        config = yaml.load(f)
 
     if root_dir == ".":
         return config
 
-    new_config = defaultdict(dict)
-    for folder_type, files in config.items():
-        for file, path in files.items():
-            new_config[folder_type][file] = os.path.join(root_dir, path)
+    with suppress(KeyError):
+        files = config['files']
+        for folder_type, files_dict in files.items():
+            for file_id, path in files_dict.items():
+                config['files'][folder_type][file_id] = os.path.join(root_dir, path)
 
-    return dict(new_config)
+    return config
 
 
 def add_common_config(exp, record_local=True):
@@ -102,7 +103,7 @@ def add_common_config(exp, record_local=True):
         record_local=record_local,
         name=exp.path
     )
-    exp.add_config("config.json")
+    exp.add_config("config.yaml")
 
     @exp.config
     def run_dir_config(name, run_id):
