@@ -1,14 +1,22 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
-dl() {
-	local filename="$1"
-	local url="$2"
+NAME=""
 
+dl_kaggle() {
+	local filename="$1"
 	if [ -f "$filename" ]; then
 		echo "$filename already downloaded"
 		return
 	fi
+
+	kaggle competitions download -c $NAME -f "$filename" -w
+	mv "$NAME/$filename" .
+}
+
+dl() {
+	local filename="$1"
+	local url="$2"
 
 	echo "Downloading $filename"
 	# Download script
@@ -43,3 +51,7 @@ extract_folder() {
 }
 
 cd data/raw
+
+if [ -d "$NAME" ]; then
+	rmdir "$NAME"
+fi
