@@ -18,7 +18,7 @@ dl() {
 	local filename="$1"
 	local url="$2"
 
-	echo "Downloading $filename"
+	echo "Downloading $filename from $url"
 	# Download script
 }
 
