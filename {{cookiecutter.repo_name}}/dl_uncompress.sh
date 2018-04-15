@@ -40,7 +40,7 @@ extract_folder() {
 	local input="$1"
 	local output="$2"
 
-	if [ -f "$output" ]; then
+	if [ -d "$output" ]; then
 		echo "$output already extracted"
 		return
 	fi
