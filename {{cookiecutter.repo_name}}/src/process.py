@@ -10,11 +10,16 @@ processed_keys = list(config['files']['processed'].keys())
 
 
 def process_train():
-    pass
+    click.echo("Working on train")
+
+
+def process_test():
+    click.echo("Working on test")
 
 
 process_funcs = {
     "train": process_train,
+    "test": process_test,
 }
 
 
