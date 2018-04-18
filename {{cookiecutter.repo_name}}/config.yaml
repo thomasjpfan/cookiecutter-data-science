@@ -4,8 +4,8 @@ files:
     train: data/raw/train.csv
     test: data/raw/test.csv
   processed:
-    train: data/processed/train.csv
-    test: data/processed/test.csv
+    train: data/processed/train.parq
+    test: data/processed/test.parq
 parameters:
   ridge:
     alpha: 0.9
