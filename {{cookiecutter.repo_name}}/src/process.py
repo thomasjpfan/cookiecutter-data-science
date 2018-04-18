@@ -6,7 +6,7 @@ import click
 from exp_utils import get_config
 
 config = get_config()
-processed_keys = list(config['processed'].keys())
+processed_keys = list(config['files']['processed'].keys())
 
 
 def process_train():
@@ -20,7 +20,7 @@ process_funcs = {
 
 def process_key(key, force):
     try:
-        process_fn = config['processed'][key]
+        process_fn = config['files']['processed'][key]
     except KeyError:
         click.echo(f'processed/{key} does not exists in config')
         return
