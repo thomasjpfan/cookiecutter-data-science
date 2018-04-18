@@ -44,9 +44,8 @@ def process_key(config, key, force):
         click.echo(f'{process_fn} already exists, use --force')
         return
 
-    click.echo(f'Processing {key}')
+    click.echo(f'Processing {key} filename: {process_fn}')
     process_funcs[key](config, force)
-    click.echo(f'{process_fn} created')
 
 
 @click.command()
