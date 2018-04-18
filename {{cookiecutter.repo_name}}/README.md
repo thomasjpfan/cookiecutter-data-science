@@ -8,7 +8,6 @@ Insert description of project.
 pip install -r requirements.txt
 ./dl_uncompress.sh
 python src/process.py
-python src/features.py
 python src/run_linear_model.py train with run_id=latest
 python src/run_linear_model.py predict with run_id=latest
 ```
