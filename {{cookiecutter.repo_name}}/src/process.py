@@ -3,31 +3,41 @@ Create processed files
 """
 import os
 import click
+import pandas as pd
 from exp_utils import get_config
 
-config = get_config()
-processed_keys = list(config['files']['processed'].keys())
+
+def get_process_train(config, force=False):
+    fn = config['files']['processed']['train']
+    if os.path.exists(fn) and not force:
+        return pd.read_parquet(fn)
+
+    tr = pd.read_csv(config['files']['raw']['train'])
+
+    return tr
 
 
-def process_train():
-    click.echo("Working on train")
+def get_process_test(config, force=False):
+    fn = config['files']['processed']['test']
+    if os.path.exists(fn) and not force:
+        return pd.read_parquet(fn)
 
+    te = pd.read_csv(config['files']['raw']['test'])
 
-def process_test():
-    click.echo("Working on test")
+    return te
 
 
 process_funcs = {
-    "train": process_train,
-    "test": process_test,
+    "train": get_process_train,
+    "test": get_process_test,
 }
 
 
-def process_key(key, force):
+def process_key(config, key, force):
     try:
         process_fn = config['files']['processed'][key]
     except KeyError:
-        click.echo(f'processed/{key} does not exists in config')
+        click.echo(f'files/processed/{key} does not exists in config')
         return
 
     if os.path.exists(process_fn) and not force:
@@ -35,23 +45,22 @@ def process_key(key, force):
         return
 
     click.echo(f'Processing {key}')
-    process_funcs[key]()
+    process_funcs[key](config, force)
     click.echo(f'{process_fn} created')
 
 
 @click.command()
-@click.option('-k', '--key',
-              type=click.Choice(processed_keys))
+@click.option('-k', '--key')
 @click.option('-f', '--force', is_flag=True)
 def process(key, force):
+    config = get_config()
 
     if key:
-        process_key(key, force)
+        process_key(config, key, force)
         return
 
-    # process everything
-    for key_type in processed_keys:
-        process_key(key_type, force)
+    for key in process_funcs:
+        process_key(config, key, force)
 
 
 if __name__ == '__main__':
