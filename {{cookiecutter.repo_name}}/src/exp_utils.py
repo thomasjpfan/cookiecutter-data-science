@@ -164,7 +164,7 @@ def get_stream_logger(name):
 def from_cache(key):
     def cache_decor(f):
         @wraps(f)
-        def wrapper(config, force):
+        def wrapper(config, force=False):
             fn = config['files']['processed'][key]
             if os.path.exists(fn) and not force:
                 return pd.read_parquet(fn)
