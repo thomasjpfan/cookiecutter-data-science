@@ -8,20 +8,20 @@ from exp_utils import get_config, from_cache
 
 
 @from_cache('train')
-def get_process_train(config, force=False):
+def get_train(config, force=False):
     tr = pd.read_csv(config['files']['raw']['train'])
     return tr
 
 
 @from_cache('test')
-def get_process_test(config, force=False):
+def get_test(config, force=False):
     te = pd.read_csv(config['files']['raw']['test'])
     return te
 
 
 process_funcs = {
-    "train": get_process_train,
-    "test": get_process_test,
+    "train": get_train,
+    "test": get_test,
 }
 
 
