@@ -1,5 +1,6 @@
 '''Experiment Setup Utils'''
 from contextlib import suppress
+from functools import wraps
 import datetime
 import logging
 import csv
@@ -158,3 +159,17 @@ def get_stream_logger(name):
     logger.addHandler(stream_handler)
 
     return logger
+
+
+def from_cache(key):
+    def cache_decor(f):
+        @wraps(f)
+        def wrapper(config, force):
+            fn = config['files']['processed'][key]
+            if os.path.exists(fn) and not force:
+                return pd.read_parquet(fn)
+            output = f(config, force)
+            output.to_parquet(fn)
+            return output
+        return wrapper
+    return cache_decor

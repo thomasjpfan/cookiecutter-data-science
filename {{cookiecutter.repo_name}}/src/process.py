@@ -1,25 +1,10 @@
 """
 Create processed files
 """
-from functools import wraps
 import os
 import click
 import pandas as pd
-from exp_utils import get_config
-
-
-def from_cache(key):
-    def cache_decor(f):
-        @wraps(f)
-        def wrapper(config, force):
-            fn = config['files']['processed'][key]
-            if os.path.exists(fn) and not force:
-                return pd.read_parquet(fn)
-            output = f(config, force)
-            output.to_parquet(fn)
-            return output
-        return wrapper
-    return cache_decor
+from exp_utils import get_config, from_cache
 
 
 @from_cache('train')
