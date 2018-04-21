@@ -1,5 +1,5 @@
 """
-Create processed files
+Create preprocessed files
 """
 import os
 import click
