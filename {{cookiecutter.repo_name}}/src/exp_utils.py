@@ -164,11 +164,11 @@ def get_stream_logger(name):
 def from_cache(key):
     def cache_decor(f):
         @wraps(f)
-        def wrapper(config, force=False):
+        def wrapper(config, force=False, **kwargs):
             fn = config['files']['processed'][key]
             if os.path.exists(fn) and not force:
                 return pd.read_parquet(fn)
-            output = f(config, force)
+            output = f(config, force, **kwargs)
             output.to_parquet(fn)
             return output
         return wrapper

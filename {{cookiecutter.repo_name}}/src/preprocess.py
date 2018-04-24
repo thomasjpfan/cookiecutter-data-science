@@ -8,13 +8,13 @@ from exp_utils import get_config, from_cache
 
 
 @from_cache('train')
-def get_train(config, force=False):
+def get_train(config, force=False, **kwargs):
     tr = pd.read_csv(config['files']['raw']['train'])
     return tr
 
 
 @from_cache('test')
-def get_test(config, force=False):
+def get_test(config, force=False, **kwargs):
     te = pd.read_csv(config['files']['raw']['test'])
     return te
 
