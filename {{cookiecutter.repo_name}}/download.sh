@@ -39,7 +39,7 @@ extract_single() {
 		return
 	fi
 
-	mv "${folder}/${output}" "$output"
+	mv "${folder}${output}" "$output"
 	rm -rf "${folder}"
 
 }
