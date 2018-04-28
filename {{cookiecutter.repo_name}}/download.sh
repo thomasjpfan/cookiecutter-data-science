@@ -24,23 +24,25 @@ dl() {
 extract_single() {
 	local input="$1"
 	local output="$2"
-	local folder="$3"
+	local fn="${output##*/}"
 
-	if [ -f "$output" ]; then
-		echo "$output already extracted"
+	if [ -f "$fn" ]; then
+		echo "$fn already extracted"
 		return
 	fi
 
-	echo "Extracting $input to $output"
+	echo "Extracting $input to $fn"
 	# Extract script
 	unzip "$input"
 
-	if [ ! -d "$folder" ]; then
+	folder=$(dirname "$output")
+	if [ "$folder" == "." ]; then
 		return
 	fi
 
-	mv "${folder}${output}" "$output"
-	rm -rf "${folder}"
+	mv "${output}" "$output"
+	base=$(echo "$2" | cut -d "/" -f1)
+	rm -rf "${base}"
 
 }
 
