@@ -1,11 +1,8 @@
 ---
 files:
-  raw:
-    train: data/raw/train.csv
-    test: data/raw/test.csv
-  processed:
-    train: data/processed/train.parq
-    test: data/processed/test.parq
+  raw_train: data/raw/train.csv
+  raw_test: data/raw/test.csv
+  proc_train: data/processed/train.parq
+  proc_test: data/processed/test.parq
 parameters:
-  ridge:
-    alpha: 0.9
+  ridge_alpha: 0.9

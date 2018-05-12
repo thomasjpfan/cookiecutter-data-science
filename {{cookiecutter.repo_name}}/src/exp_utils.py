@@ -92,7 +92,7 @@ def get_config(root_dir="."):
     with suppress(KeyError):
         files = config['files']
         for file_key, file_path in files.items():
-            if file_key.startswith("proc"):
+            if file_key.startswith("proc_"):
                 config['files'][file_key] = os.path.join(root_dir, file_path)
 
     return config
