@@ -91,9 +91,9 @@ def get_config(root_dir="."):
 
     with suppress(KeyError):
         files = config['files']
-        for folder_type, files_dict in files.items():
-            for file_id, path in files_dict.items():
-                config['files'][folder_type][file_id] = os.path.join(root_dir, path)
+        for file_key, file_path in files.items():
+            if file_key.startswith("proc"):
+                config['files'][file_key] = os.path.join(root_dir, file_path)
 
     return config
 
@@ -161,11 +161,11 @@ def get_stream_logger(name):
     return logger
 
 
-def from_cache(key):
+def from_dataframe_cache(key):
     def cache_decor(f):
         @wraps(f)
         def wrapper(config, force=False, **kwargs):
-            fn = config['files']['processed'][key]
+            fn = config['files'][key]
             if os.path.exists(fn) and not force:
                 return pd.read_parquet(fn)
             output = f(config, force, **kwargs)

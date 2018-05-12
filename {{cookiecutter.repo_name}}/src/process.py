@@ -4,30 +4,34 @@ Create processed files
 import os
 import click
 import pandas as pd
-from exp_utils import get_config, from_cache
+from exp_utils import get_config, from_dataframe_cache
 
 
-@from_cache('train')
+@from_dataframe_cache('proc_train')
 def get_train(config, force=False, **kwargs):
-    tr = pd.read_csv(config['files']['raw']['train'])
+    tr = pd.read_csv(config['files']['raw_train'])
     return tr
 
 
-@from_cache('test')
+@from_dataframe_cache('proc_test')
 def get_test(config, force=False, **kwargs):
-    te = pd.read_csv(config['files']['raw']['test'])
+    te = pd.read_csv(config['files']['raw_test'])
     return te
 
 
 process_funcs = {
-    "train": get_train,
-    "test": get_test,
+    "proc_train": get_train,
+    "proc_test": get_test,
 }
 
 
 def process_key(config, key, force):
+    if not key.startswith("proc_"):
+        click.echo(f"{key} is not process key in config.yaml")
+        return
+
     try:
-        process_fn = config['files']['processed'][key]
+        process_fn = config['files'][key]
     except KeyError:
         click.echo(f'files/processed/{key} does not exists in config')
         return

@@ -24,6 +24,14 @@ export MONGODB_URL=mongodb://test:abc@localhost:27017/boo?authMechanism=SCRAM-SH
 export MONGODB_NAME=boo
 ```
 
+### Sacredboard to view experiments
+
+To run sacredboard:
+
+```bash
+sacredboard -mu $MONGODB_URL $MONGODB_NAME
+```
+
 ### Using Pushover for notifications
 
 Install notifiers: `pip install notifiers`. Add notifier env vars to `.envrc`:
