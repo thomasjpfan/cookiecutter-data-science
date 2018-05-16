@@ -1,6 +1,8 @@
 '''Experiment Setup Utils'''
 from contextlib import suppress
 from functools import wraps
+from pathlib import Path
+from munch import munchify
 import datetime
 import logging
 import csv
@@ -92,9 +94,9 @@ def get_config(root_dir="."):
     with suppress(KeyError):
         files = config['files']
         for file_key, file_path in files.items():
-            config['files'][file_key] = os.path.join(root_dir, file_path)
+            config['files'][file_key] = Path(os.path.join(root_dir, file_path))
 
-    return config
+    return munchify(config)
 
 
 def add_common_config(exp, record_local=True):

@@ -4,3 +4,4 @@ sacred
 sklearn
 scipy
 PyYAML
+munch

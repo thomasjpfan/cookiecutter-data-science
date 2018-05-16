@@ -11,10 +11,11 @@ from sklearn.metrics import mean_squared_error
 import numpy as np
 import scipy.stats
 
-from exp_utils import add_common_config
+from exp_utils import add_common_config, get_config
 
 exp = Experiment("linear_model")
 add_common_config(exp, record_local=True)
+config = get_config()
 LINEAR_MODEL = "linear_model.pkl"
 PREDICT_FN = "predictions.npy"
 
