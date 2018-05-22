@@ -63,7 +63,7 @@ def train(model_id, run_dir, parameters, _log, _run):
     X = np.random.rand(300).reshape(-1, 1)
     y = 4 * X + np.random.randn(300, 1) * 0.5
 
-    linear_model = Ridge(parameters['ridge']['alpha'])
+    linear_model = Ridge(parameters['ridge_alpha'])
     valid_scores = cross_val_score(
         linear_model, X, y, scoring='neg_mean_squared_error', cv=5)
     valid_score = -np.mean(valid_scores)
