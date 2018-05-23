@@ -20,9 +20,6 @@ def get_config(root_dir="."):
     with open(config_fn, "r") as f:
         config = yaml.load(f)
 
-    if root_dir == ".":
-        return config
-
     with suppress(KeyError):
         files = config['files']
         for file_key, file_path in files.items():

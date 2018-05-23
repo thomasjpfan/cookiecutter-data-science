@@ -4,5 +4,5 @@ files:
   raw_test: data/raw/test.csv
   proc_train: data/processed/train.parq
   proc_test: data/processed/test.parq
-parameters:
+params:
   ridge_alpha: 0.9

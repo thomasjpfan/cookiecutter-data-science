@@ -1,7 +1,6 @@
 """
 Create processed files
 """
-import os
 import click
 import pandas as pd
 from exp_utils import get_config, from_dataframe_cache
@@ -36,7 +35,7 @@ def process_key(config, key, force):
         click.echo(f'files/processed/{key} does not exists in config')
         return
 
-    if os.path.exists(process_fn) and not force:
+    if process_fn.exists() and not force:
         click.echo(f'{process_fn} already exists, use --force')
         return
 
