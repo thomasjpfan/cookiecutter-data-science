@@ -15,3 +15,9 @@ def get_train(config, force=False, **kwargs):
 def get_test(config, force=False, **kwargs):
     te = pd.read_csv(config['files']['raw_test'])
     return te
+
+
+process_funcs = {
+    "proc_train": get_train,
+    "proc_test": get_test,
+}

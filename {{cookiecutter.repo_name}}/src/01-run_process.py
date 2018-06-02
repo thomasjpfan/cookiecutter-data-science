@@ -4,12 +4,7 @@ Create processed files
 import argparse
 
 from exp_utils import get_config
-from process import get_train, get_test
-
-process_funcs = {
-    "proc_train": get_train,
-    "proc_test": get_test,
-}
+from process import process_funcs
 
 
 def process_key(config, key, force):
