@@ -7,7 +7,7 @@ Insert description of project.
 ```bash
 pip install -r requirements.txt
 ./download.sh
-python src/01-process.py
+python src/01-run_process.py
 python src/02-run_linear_model.py train with run_id=latest
 python src/02-run_linear_model.py predict with run_id=latest
 ```
