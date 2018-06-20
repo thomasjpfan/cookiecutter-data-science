@@ -77,6 +77,6 @@ def add_pushover_handler_from_env(log):
 def add_neptune_observers_from_env(observers):
     use_neptune = os.environ.get('USE_NEPTUNE')
 
-    if use_neptune:
+    if use_neptune == 'true':
         from exp.utils.neptune import NeptuneObserver
         observers.append(NeptuneObserver())
