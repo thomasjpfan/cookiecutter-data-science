@@ -47,16 +47,17 @@ def add_common_config(exp, record_local=True):
     exp.observers.append(CSVObserver())
     exp.observers.append(ArtifactObserver(exp.logger))
     add_monogodb_from_env(exp.observers)
+    add_neptune_observers_from_env(exp.observers)
     add_pushover_handler_from_env(exp.logger)
     exp.captured_out_filter = apply_backspaces_and_linefeeds
 
 
-def add_monogodb_from_env(exp):
+def add_monogodb_from_env(observers):
     mongodb_url = os.environ.get('MONGODB_URL')
     mongodb_name = os.environ.get('MONGODB_NAME')
 
     if mongodb_url and mongodb_name:
-        exp.append(MongoObserver.create(
+        observers.append(MongoObserver.create(
             url=mongodb_url,
             db_name=mongodb_name
         ))
@@ -71,3 +72,11 @@ def add_pushover_handler_from_env(log):
         h = NotificationHandler('pushover')
         h.setLevel(logging.WARNING)
         log.addHandler(h)
+
+
+def add_neptune_observers_from_env(observers):
+    use_neptune = os.environ.get('USE_NEPTUNE')
+
+    if use_neptune:
+        from exp.utils.neptune import NeptuneObserver
+        observers.append(NeptuneObserver())

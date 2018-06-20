@@ -7,9 +7,10 @@ Insert description of project.
 ```bash
 pip install -r requirements.txt
 ./download.sh
-python src/01-run_process.py
-python src/02-run_linear_model.py train with run_id=latest
-python src/02-run_linear_model.py predict with run_id=latest
+python main.py process train
+python main.py process test
+python main.py run linear_model train -id latest -rl
+python main.py run linear_model predict -id latest
 ```
 
 ## Observing experiments
@@ -43,3 +44,18 @@ export NOTIFIERS_PUSHOVER_USER=BAR
 ```
 
 Logs with level `INFO` and higher will be logged to pushover.
+
+### Using Neptune to log experiments
+
+Install neptune: `pip install neptune-cli`. Add neptune envs to `.envrc`:
+
+```bash
+# .envrc
+export USE_NEPTUNE=true
+```
+
+To upload metrics to neptune append `neptune run` to commands:
+
+```bash
+neptune run --open-webbrowser false main.py run linear_model train -id latest -rl
+```

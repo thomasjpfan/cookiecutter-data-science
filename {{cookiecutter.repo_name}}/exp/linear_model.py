@@ -12,6 +12,7 @@ import scipy.stats
 from exp.utils import add_common_config, get_params
 
 exp = Experiment("linear_model")
+exp.add_config(tags=["linear_model"])
 add_common_config(exp, record_local=True)
 params = get_params()
 

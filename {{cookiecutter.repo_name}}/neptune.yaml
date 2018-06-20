@@ -1,4 +1,24 @@
 ---
+# neptune specific
+project: {{ cookiecutter.repo_name }}
+
+name: {{ cookiecutter.repo_name }}
+
+metric:
+  channel: 'valid'
+  goal: maximize
+
+exclude:
+  - artifacts
+  - data
+  - exp
+  - notebooks
+  - .git
+  - .gitignore
+  - download.sh
+  - LICENSE
+  - README.md
+
 parameters:
   # files
   files__raw_train: train.csv
