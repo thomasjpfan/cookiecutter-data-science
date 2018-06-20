@@ -1,0 +1,12 @@
+---
+parameters:
+  # files
+  files__raw_train: train.csv
+  files__raw_test: test.csv
+  files__proc_train: train.parq
+  files__proc_test: test.parq
+
+  # Ridge
+  ridge__alpha: 0.9
+  ridge__model_fn: ridge_model.pkl
+  ridge__prediction_fn: ridge_pred.npy

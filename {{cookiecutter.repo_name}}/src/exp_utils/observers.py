@@ -17,7 +17,7 @@ class CSVObserver(RunObserver):
 
     def started_event(self, ex_info, command, host_info, start_time,
                       config, meta_info, _id):
-        if command != 'train':
+        if command not in ['train', 'train_hp']:
             self.record_local = False
             return
         self.results_fn = 'artifacts/results.csv'

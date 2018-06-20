@@ -1,4 +1,3 @@
-from contextlib import suppress
 import logging
 import os
 import datetime
@@ -12,29 +11,32 @@ import yaml
 from .observers import CSVObserver, ArtifactObserver
 from .logging import get_stream_logger
 
-TIME_FORMAT = '%Y%m%d_%H%M%S'
 
-
-def get_config(root_dir="."):
-    config_fn = os.path.join(root_dir, "config.yaml")
+def get_params(root_dir="."):
+    config_fn = os.path.join(root_dir, "neptune.yaml")
     with open(config_fn, "r") as f:
         config = yaml.load(f)
 
-    with suppress(KeyError):
-        files = config['files']
-        for file_key, file_path in files.items():
-            config['files'][file_key] = Path(os.path.join(root_dir, file_path))
+    params = config['parameters']
+    for key, value in params.items():
+        if key.startswith("files__raw_"):
+            config['parameters'][key] = Path(
+                os.path.join(root_dir, "data/raw", value))
+        elif key.startswith("files__proc_"):
+            config['parameters'][key] = Path(
+                os.path.join(root_dir, "data/proc", value))
 
-    return munchify(config)
+    return munchify(params)
 
 
 def add_common_config(exp, record_local=True):
     exp.add_config(
-        run_id=datetime.datetime.utcnow().strftime(TIME_FORMAT),
+        run_id=datetime.datetime.utcnow().strftime('%Y%m%d_%H%M%S'),
         record_local=record_local,
         name=exp.path
     )
-    exp.add_config("config.yaml")
+    params = get_params()
+    exp.add_config(**params)
 
     @exp.config
     def run_dir_config(name, run_id):

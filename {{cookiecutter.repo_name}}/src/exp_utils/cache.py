@@ -1,4 +1,3 @@
-import os
 from functools import wraps
 
 import pandas as pd
@@ -7,11 +6,11 @@ import pandas as pd
 def from_dataframe_cache(key):
     def cache_decor(f):
         @wraps(f)
-        def wrapper(config, force=False, **kwargs):
-            fn = config['files'][key]
-            if os.path.exists(fn) and not force:
+        def wrapper(params, force=False, **kwargs):
+            fn = params[key]
+            if fn.exists() and not force:
                 return pd.read_parquet(fn)
-            output = f(config, force, **kwargs)
+            output = f(params, force, **kwargs)
             output.to_parquet(fn)
             return output
         return wrapper

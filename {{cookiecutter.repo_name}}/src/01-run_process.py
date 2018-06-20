@@ -3,19 +3,19 @@ Create processed files
 """
 import argparse
 
-from exp_utils import get_config
+from exp_utils import get_params
 from process import process_funcs
 
 
-def process_key(config, key, force):
-    if not key.startswith("proc_"):
-        print(f"{key} is not process key in config.yaml")
+def process_key(params, key, force):
+    if not key.startswith("files__proc_"):
+        print(f"{key} is not process key in neptune.yaml")
         return
 
     try:
-        process_fn = config['files'][key]
+        process_fn = params[key]
     except KeyError:
-        print(f'files/processed/{key} does not exists in config')
+        print(f'files/processed/{key} does not exists in params')
         return
 
     if process_fn.exists() and not force:
@@ -23,18 +23,18 @@ def process_key(config, key, force):
         return
 
     print(f'Processing {key} filename: {process_fn}')
-    process_funcs[key](config, force)
+    process_funcs[key](params, force)
 
 
 def process(key, force):
-    config = get_config()
+    params = get_params()
 
     if key:
-        process_key(config, key, force)
+        process_key(params, key, force)
         return
 
     for key in process_funcs:
-        process_key(config, key, force)
+        process_key(params, key, force)
 
 
 if __name__ == '__main__':
