@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Linear Model"""
 import os
 
@@ -10,7 +9,7 @@ from sklearn.metrics import mean_squared_error
 import numpy as np
 import scipy.stats
 
-from exp_utils import add_common_config, get_params
+from exp.utils import add_common_config, get_params
 
 exp = Experiment("linear_model")
 add_common_config(exp, record_local=True)
@@ -54,7 +53,7 @@ def train_hp(model_id, _log, _run):
     return [test_score, train_score]
 
 
-@exp.automain
+@exp.command
 def train(model_id, run_dir, _log, _run):
 
     X = np.random.rand(300).reshape(-1, 1)

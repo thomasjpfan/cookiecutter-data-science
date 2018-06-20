@@ -12,8 +12,8 @@ from .observers import CSVObserver, ArtifactObserver
 from .logging import get_stream_logger
 
 
-def get_params(root_dir="."):
-    config_fn = os.path.join(root_dir, "neptune.yaml")
+def get_params(root_dir=".", config_fn="neptune.yaml"):
+    config_fn = os.path.join(root_dir, config_fn)
     with open(config_fn, "r") as f:
         config = yaml.load(f)
 

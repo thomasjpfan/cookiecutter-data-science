@@ -4,3 +4,5 @@ sklearn
 scipy
 PyYAML
 munch
+click
+pyarrow
