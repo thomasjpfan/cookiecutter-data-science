@@ -18,6 +18,8 @@ exclude:
   - download.sh
   - LICENSE
   - README.md
+  - neptune.log
+  - offline_job.log
 
 parameters:
   # files
