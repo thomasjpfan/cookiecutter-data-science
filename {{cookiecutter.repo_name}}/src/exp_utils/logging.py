@@ -1,6 +1,6 @@
 import logging
 
-LOGGING_FORMAT = '> %(message)s'
+LOGGING_FORMAT = '%(message)s'
 
 
 def get_log_file_handler(log_fn, level=logging.INFO):
