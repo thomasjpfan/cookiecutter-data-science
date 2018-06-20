@@ -10,7 +10,7 @@ from .logging import get_log_file_handler
 
 class CSVObserver(RunObserver):
 
-    COLS = ['model_id', 'delta_time', 'train', 'valid']
+    COLS = ['model_id', 'start_time', 'delta_time', 'train', 'valid']
 
     def started_event(self, ex_info, command, host_info, start_time,
                       config, meta_info, _id):
@@ -33,6 +33,7 @@ class CSVObserver(RunObserver):
             return
         d_time = (stop_time - self.start_time).total_seconds()
         result = {'model_id': self.model_id,
+                  'start_time': self.start_time.isoformat(),
                   'delta_time': f'{d_time:.2f}',
                   'train': result[1], 'valid': result[0]}
         with open(self.results_fn, 'r') as f:
