@@ -8,9 +8,6 @@ from sacred.observers.base import RunObserver
 from .logging import get_log_file_handler
 
 
-VAL_TRAIN_SCORE = "val_train_score.txt"
-
-
 class CSVObserver(RunObserver):
 
     COLS = ['model_id', 'delta_time', 'train', 'valid']
@@ -64,7 +61,7 @@ class ArtifactObserver(RunObserver):
         file_hander = get_log_file_handler(log_fn)
 
         self.logger.addHandler(file_hander)
-        self.val_test_score_fn = os.path.join(run_dir, VAL_TRAIN_SCORE)
+        self.val_test_score_fn = os.path.join(run_dir, "val_train_score.txt")
 
     def completed_event(self, stop_time, result):
         if not result or len(result) != 2:
