@@ -18,7 +18,7 @@ class CSVObserver(RunObserver):
             self.record_local = False
             return
         self.results_fn = 'artifacts/results.csv'
-        self.model_id = config['model_id']
+        self.model_id = config['model_id'] + '_' + command
         self.start_time = start_time
         self.record_local = config['record_local']
 
