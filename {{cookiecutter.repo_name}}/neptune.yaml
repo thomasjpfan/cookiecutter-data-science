@@ -32,3 +32,8 @@ parameters:
   ridge__alpha: 0.9
   ridge__model_fn: ridge_model.pkl
   ridge__prediction_fn: ridge_pred.npy
+
+  # neutral network
+  simple_nn__model_fn: nn_simple_histoy_model.pkl
+  simple_nn__history_fn: nn_simple_history.json
+  simple_nn__prediction_fn: nn_simple_pred.npy
