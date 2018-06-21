@@ -15,7 +15,7 @@ from .logging import get_stream_logger
 def get_params(root_dir=".", config_fn="neptune.yaml"):
     config_fn = os.path.join(root_dir, config_fn)
     with open(config_fn, "r") as f:
-        config = yaml.load(f)
+        config = yaml.safe_load(f)
 
     params = config['parameters']
     for key, value in params.items():
