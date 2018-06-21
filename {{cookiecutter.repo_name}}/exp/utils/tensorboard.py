@@ -22,4 +22,3 @@ class TensorboardXRecorder(MetricsRecorder):
 
     def on_train_end(self, net, **kwargs):
         self.writer.close()
-

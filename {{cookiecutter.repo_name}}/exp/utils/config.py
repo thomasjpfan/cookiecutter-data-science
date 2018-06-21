@@ -80,4 +80,3 @@ def add_neptune_observers_from_env(observers):
     if use_neptune == 'true':
         from exp.utils.neptune import NeptuneObserver
         observers.append(NeptuneObserver())
-
