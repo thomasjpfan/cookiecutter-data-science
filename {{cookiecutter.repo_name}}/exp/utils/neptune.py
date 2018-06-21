@@ -1,5 +1,6 @@
 from deepsense import neptune
 from sacred.observers.base import RunObserver
+from .skorch import MetricsRecorder
 
 
 class NeptuneObserver(RunObserver):
@@ -18,3 +19,18 @@ class NeptuneObserver(RunObserver):
             return
         self.ctx.channel_send("valid", 0, result[0])
         self.ctx.channel_send("train", 0, result[1])
+
+
+class NeptuneSkorchCallback(MetricsRecorder):
+
+    def __init__(self, batch_targets=None, epoch_targets=None):
+        self.ctx = neptune.Context()
+
+        super().__init__(
+            batch_targets=batch_targets, epoch_targets=epoch_targets)
+
+    def update_batch_value(self, name, idx, value):
+        self.ctx.channel_send(name, idx, value)
+
+    def update_epoch_value(self, name, idx, value):
+        self.ctx.channel_send(name, idx, value)

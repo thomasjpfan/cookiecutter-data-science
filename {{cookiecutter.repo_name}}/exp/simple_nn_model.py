@@ -8,9 +8,8 @@ from torch import nn
 import torch.nn.functional as F
 
 from skorch import NeuralNetClassifier
-from skorch.callbacks import EpochScoring
 
-from exp.utils import add_common_config, get_params
+from .utils import add_common_config, get_params, get_classification_skorch_callbacks
 
 exp = Experiment("simple_nn_model")
 exp.add_config(tags=["simple_nn_model"])
@@ -36,14 +35,7 @@ class MyModule(nn.Module):
         return X
 
 
-net = NeuralNetClassifier(
-    MyModule,
-    max_epochs=1,
-    lr=0.1,
-    callbacks=[
-        EpochScoring(
-            'accuracy', name='train_acc', lower_is_better=False, on_train=True)
-    ])
+net = NeuralNetClassifier(MyModule, max_epochs=10, lr=0.1, callbacks=[])
 
 
 @exp.command
@@ -69,15 +61,18 @@ def train_hp(model_id, _log, _run):
 
 @exp.command
 def train(model_id, run_dir, _log, _run):
-    model_fn = os.path.join(run_dir, params.simple_nn__model_fn)
+    checkpoint_fn = os.path.join(run_dir, params.simple_nn__model_fn)
     history_fn = os.path.join(run_dir, params.simple_nn__history_fn)
 
     X, y = make_classification(1000, 20, n_informative=10, random_state=0)
     X = X.astype(np.float32)
     y = y.astype(np.int64)
+
+    callbacks = get_classification_skorch_callbacks(model_id, checkpoint_fn)
+
+    net.callbacks.extend(callbacks)
     net.fit(X, y)
 
-    net.save_params(model_fn)
     net.save_history(history_fn)
 
     valid_score = net.history[-1, 'valid_acc']
