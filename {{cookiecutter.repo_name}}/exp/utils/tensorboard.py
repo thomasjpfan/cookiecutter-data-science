@@ -14,11 +14,17 @@ class TensorboardXRecorder(MetricsRecorder):
         super().__init__(
             batch_targets=batch_targets, epoch_targets=epoch_targets)
 
-    def update_batch_value(self, name, idx, value):
-        self.writer.add_scalar(f'batch/{name}', value, idx)
+    def update_batch_values(self, values, idx):
+        for name, value in values.items():
+            self.writer.add_scalar(f'batch/{name}', value, idx)
+        if len(values) >= 2:
+            self.writer.add_scalars('batch', values, idx)
 
-    def update_epoch_value(self, name, idx, value):
-        self.writer.add_scalar(f'epoch/{name}', value, idx)
+    def update_epoch_values(self, values, idx):
+        for name, value in values.items():
+            self.writer.add_scalar(f'epoch/{name}', value, idx)
+        if len(values) >= 2:
+            self.writer.add_scalars('epoch', values, idx)
 
     def on_train_end(self, net, **kwargs):
         self.writer.close()

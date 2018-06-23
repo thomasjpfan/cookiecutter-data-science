@@ -8,28 +8,34 @@ class MetricsRecorder(Callback):
         self.batch_targets = batch_targets
         self.epoch_targets = epoch_targets
 
-    def update_batch_value(self, name, idx, value):
+    def update_batch_values(self, values, idx):
         raise NotImplementedError("Not implemented")
 
-    def update_epoch_value(self, name, idx, value):
+    def update_epoch_values(self, values, idx):
         raise NotImplementedError("Not implemented")
 
     def on_batch_end(self, net, **kwargs):
         if self.batch_targets is None:
             return
         batch_idx = self._get_batch_idx(net)
+
+        values = {}
         for name in self.batch_targets:
-            value = net.history[-1, 'batches', name, -1]
-            self.update_batch_value(name, batch_idx, value)
+            values[name] = net.history[-1, 'batches', name, -1]
+
+        self.update_batch_values(values, batch_idx)
 
     def on_epoch_end(self, net, **kwargs):
         if self.epoch_targets is None:
             return
 
         epoch = len(net.history)
+
+        values = {}
         for name in self.epoch_targets:
-            value = net.history[-1, name]
-            self.update_epoch_value(name, epoch, value)
+            values[name] = net.history[-1, name]
+
+        self.update_epoch_values(values, epoch)
 
     def _get_batch_idx(self, net):
         if not net.history:

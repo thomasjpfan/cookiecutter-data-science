@@ -29,8 +29,10 @@ class NeptuneSkorchCallback(MetricsRecorder):
         super().__init__(
             batch_targets=batch_targets, epoch_targets=epoch_targets)
 
-    def update_batch_value(self, name, idx, value):
-        self.ctx.channel_send(name, idx, value)
+    def update_batch_values(self, values, idx):
+        for name, value in values.items():
+            self.ctx.channel_send(name, idx, value)
 
-    def update_epoch_value(self, name, idx, value):
-        self.ctx.channel_send(name, idx, value)
+    def update_epoch_values(self, values, idx):
+        for name, value in values.items():
+            self.ctx.channel_send(name, idx, value)
