@@ -1,6 +1,6 @@
 from deepsense import neptune
 from sacred.observers.base import RunObserver
-from .skorch import MetricsRecorder
+from .skorch import MetricsLogger
 
 
 class NeptuneObserver(RunObserver):
@@ -21,7 +21,7 @@ class NeptuneObserver(RunObserver):
         self.ctx.channel_send("train", 0, result[1])
 
 
-class NeptuneSkorchCallback(MetricsRecorder):
+class NeptuneSkorchCallback(MetricsLogger):
 
     def __init__(self, batch_targets=None, epoch_targets=None):
         self.ctx = neptune.Context()

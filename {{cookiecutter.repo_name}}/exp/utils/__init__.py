@@ -5,7 +5,8 @@ from skorch.callbacks import Checkpoint
 
 from .config import get_params, add_common_config
 from .cache import from_dataframe_cache
-from .tensorboard import TensorboardXRecorder
+from .tensorboard import TensorboardXLogger
+from .skorch import LRRecorder
 
 __all__ = ['get_params', 'add_common_config', 'from_dataframe_cache',
            'get_neptune_skorch_callback']
@@ -23,20 +24,25 @@ def get_neptune_skorch_callback(batch_targets=None, epoch_targets=None):
 
 
 def get_classification_skorch_callbacks(
-        model_id, checkpoint_fn):
+        model_id, checkpoint_fn, pgroups):
+
+    pgroup_names = [item[0] + "_lr" for item in pgroups]
+
     callbacks = [
         EpochScoring(
             'accuracy', name='train_acc', lower_is_better=False,
             on_train=True),
-        TensorboardXRecorder(
+        TensorboardXLogger(
             model_id,
             batch_targets=['train_loss'],
-            epoch_targets=['train_acc', 'valid_acc']),
-        Checkpoint(target=checkpoint_fn)
+            epoch_targets=['train_acc', 'valid_acc'] + pgroup_names,
+            epoch_groups=['acc']),
+        Checkpoint(target=checkpoint_fn),
+        LRRecorder(group_names=pgroup_names)
     ]
 
     neptune_callback = get_neptune_skorch_callback(
-        batch_targets=['train_loss'], epoch_targets=['train_acc', 'valid_acc'])
+        batch_targets=['train_loss'], epoch_targets=['train_acc', 'valid_acc'] + pgroup_names)
     if neptune_callback is not None:
         callbacks.append(neptune_callback)
 

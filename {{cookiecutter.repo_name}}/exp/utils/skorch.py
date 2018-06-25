@@ -1,7 +1,7 @@
 from skorch.callbacks.base import Callback
 
 
-class MetricsRecorder(Callback):
+class MetricsLogger(Callback):
 
     def __init__(self, batch_targets=None, epoch_targets=None):
 
@@ -44,3 +44,23 @@ class MetricsRecorder(Callback):
         current_batch_idx = len(net.history[-1, 'batches']) - 1
         batch_cnt = len(net.history[-2, 'batches']) if epoch >= 1 else 0
         return epoch * batch_cnt + current_batch_idx
+
+
+class LRRecorder(Callback):
+
+    def __init__(self, group_names=None, default_group="default_lr"):
+        if group_names is None:
+            group_names = []
+        if default_group:
+            group_names.append(default_group)
+        self.group_names = group_names
+
+    def on_train_begin(self, net, **kwargs):
+        self.optimizer = net.optimizer_
+
+    def on_batch_end(self, net, **kwargs):
+        history = net.history
+        pgroups = self.optimizer.param_groups
+
+        for pgroup, name in zip(pgroups, self.group_names):
+            history.record(name, pgroup['lr'])

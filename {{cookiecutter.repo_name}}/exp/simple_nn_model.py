@@ -68,7 +68,15 @@ def train(model_id, run_dir, _log, _run):
     X = X.astype(np.float32)
     y = y.astype(np.int64)
 
-    callbacks = get_classification_skorch_callbacks(model_id, checkpoint_fn)
+    pgroups = [
+        ('dense0.*', {
+            'lr': 0.02
+        }),
+    ]
+    net.set_params(optimizer__param_groups=pgroups)
+
+    callbacks = get_classification_skorch_callbacks(model_id, checkpoint_fn,
+                                                    pgroups)
 
     net.callbacks.extend(callbacks)
     net.fit(X, y)
