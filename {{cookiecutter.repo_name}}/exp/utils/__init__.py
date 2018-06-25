@@ -8,8 +8,7 @@ from .cache import from_dataframe_cache
 from .tensorboard import TensorboardXLogger
 from .skorch import LRRecorder
 
-__all__ = ['get_params', 'add_common_config', 'from_dataframe_cache',
-           'get_neptune_skorch_callback']
+__all__ = ['get_params', 'add_common_config', 'from_dataframe_cache']
 
 
 def get_neptune_skorch_callback(batch_targets=None, epoch_targets=None):
