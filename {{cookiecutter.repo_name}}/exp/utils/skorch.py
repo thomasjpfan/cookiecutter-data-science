@@ -64,3 +64,11 @@ class LRRecorder(Callback):
 
         for pgroup, name in zip(pgroups, self.group_names):
             history.record(name, pgroup['lr'])
+
+
+class HistorySaver(Callback):
+    def __init__(self, target):
+        self.target = target
+
+    def on_epoch_end(self, net, **kwargs):
+        net.save_history(self.target)

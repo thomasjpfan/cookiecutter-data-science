@@ -6,7 +6,7 @@ from skorch.callbacks import Checkpoint
 from .config import get_params, add_common_config
 from .cache import from_dataframe_cache
 from .tensorboard import TensorboardXLogger
-from .skorch import LRRecorder
+from .skorch import LRRecorder, HistorySaver
 
 __all__ = ['get_params', 'add_common_config', 'from_dataframe_cache']
 
@@ -23,7 +23,7 @@ def get_neptune_skorch_callback(batch_targets=None, epoch_targets=None):
 
 
 def get_classification_skorch_callbacks(
-        model_id, checkpoint_fn, pgroups):
+        model_id, checkpoint_fn, history_fn, pgroups):
 
     pgroup_names = [item[0] + "_lr" for item in pgroups]
 
@@ -37,7 +37,8 @@ def get_classification_skorch_callbacks(
             epoch_targets=['train_acc', 'valid_acc'] + pgroup_names,
             epoch_groups=['acc']),
         Checkpoint(target=checkpoint_fn),
-        LRRecorder(group_names=pgroup_names)
+        LRRecorder(group_names=pgroup_names),
+        HistorySaver(target=history_fn)
     ]
 
     neptune_callback = get_neptune_skorch_callback(

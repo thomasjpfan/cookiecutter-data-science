@@ -76,12 +76,10 @@ def train(model_id, run_dir, _log, _run):
     net.set_params(optimizer__param_groups=pgroups)
 
     callbacks = get_classification_skorch_callbacks(model_id, checkpoint_fn,
-                                                    pgroups)
+                                                    history_fn, pgroups)
 
     net.callbacks.extend(callbacks)
     net.fit(X, y)
-
-    net.save_history(history_fn)
 
     valid_score = net.history[-1, 'valid_acc']
     train_score = net.history[-1, 'train_acc']
