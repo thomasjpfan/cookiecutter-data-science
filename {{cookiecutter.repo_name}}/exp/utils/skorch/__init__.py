@@ -216,3 +216,16 @@ def plot_lrs(lr_sch_class, steps, by_epoch, ax=None, **kwargs):
         _, ax = plt.subplots()
     lrs = compute_lrs(lr_sch_class, steps, by_epoch, **kwargs)
     ax.plot(range(steps), lrs)
+
+
+def set_params_in_module(module, **kwargs):
+    for k, v in kwargs.items():
+        set_param_in_module(module, k, v)
+
+
+def set_param_in_module(module, param, value):
+    name, key = param.rsplit('__', 1)
+    name = name.replace('__', '.')
+    for n, p in module.named_parameters():
+        if n.startswith(name):
+            p.__setattr__(key, value)

@@ -49,12 +49,13 @@ class CyclicLR(object):
       may not actually be reached depending on scaling function.
 
     step_size : int (default=2000)
-      Number of training iterations per for first half of a cycle.
-      Authors suggest setting step_size 2-8 x training iterations in epoch.
+      Number of training iterations in the first half of a cycle.
+      Authors suggest setting step_size 2-8 x training iterations in an
+      epoch.
 
     step_size_2 : int (default=None)
-      Number of training iterations per for second half of a cycle.
-      Authors suggest setting step_size 2-8 x training iterations in epoch.
+      Number of training iterations in the second half of a cycle.
+      If step_size_2 is None, it is set to step_size.
 
     mode : str (default='triangular')
       One of {triangular, triangular2, exp_range}. Values correspond
@@ -98,9 +99,16 @@ class CyclicLR(object):
 
     """
 
-    def __init__(self, optimizer, base_lr=1e-3, max_lr=6e-3,
-                 step_size=2000, step_size_2=None, mode='triangular',
-                 gamma=1., scale_fn=None, scale_mode='cycle',
+    def __init__(self,
+                 optimizer,
+                 base_lr=1e-3,
+                 max_lr=6e-3,
+                 step_size=2000,
+                 step_size_2=None,
+                 mode='triangular',
+                 gamma=1.,
+                 scale_fn=None,
+                 scale_mode='cycle',
                  last_batch_idx=-1):
 
         if not isinstance(optimizer, Optimizer):
@@ -173,7 +181,7 @@ class CyclicLR(object):
         Decreases the cycle amplitude by half after each period,
         while keeping the base lr constant.
         """
-        return 1 / (2. ** (x - 1))
+        return 1 / (2.**(x - 1))
 
     def _exp_range_scale_fn(self, x):
         """
@@ -191,7 +199,7 @@ class CyclicLR(object):
         if x <= self.step_ratio:
             scale_factor = x / self.step_ratio
         else:
-            scale_factor = 1/(self.step_ratio-1)*(x-1)
+            scale_factor = (x - 1) / (self.step_ratio - 1)
 
         lrs = []
         for base_lr, max_lr in zip(self.base_lrs, self.max_lrs):
