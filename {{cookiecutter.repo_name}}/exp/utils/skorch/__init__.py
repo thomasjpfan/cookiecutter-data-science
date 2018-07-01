@@ -230,3 +230,15 @@ def set_param_in_module(module, param, value):
     for n, p in module.named_parameters():
         if n.startswith(name):
             methodcaller(f'{key}_', value)(p)
+
+
+def set_requires_grad(module, name, reqs_grad):
+    name = name.replace('__', '.')
+    for n, p in module.named_parameters():
+        if n.startswith(name):
+            p.requires_grad_(reqs_grad)
+
+
+def set_requires_grads(module, **kwargs):
+    for param, reqs_grad in kwargs.items():
+        set_requires_grad(module, param, reqs_grad)
