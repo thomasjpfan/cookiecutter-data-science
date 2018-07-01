@@ -1,4 +1,5 @@
 from contextlib import suppress
+from operator import methodcaller
 
 import numpy as np
 import torch
@@ -228,4 +229,4 @@ def set_param_in_module(module, param, value):
     name = name.replace('__', '.')
     for n, p in module.named_parameters():
         if n.startswith(name):
-            p.__setattr__(key, value)
+            methodcaller(f'{key}_', value)(p)
