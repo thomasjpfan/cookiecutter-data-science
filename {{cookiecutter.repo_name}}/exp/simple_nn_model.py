@@ -9,7 +9,8 @@ import torch.nn.functional as F
 
 from skorch import NeuralNetClassifier
 
-from .utils import add_common_config, get_params, get_classification_skorch_callbacks
+from .utils import get_classification_skorch_callbacks
+from .utils.sacred import add_common_config, get_params
 
 exp = Experiment("simple_nn_model")
 exp.add_config(tags=["simple_nn_model"])
@@ -75,8 +76,8 @@ def train(model_id, run_dir, _log, _run):
     ]
     net.set_params(optimizer__param_groups=pgroups)
 
-    callbacks = get_classification_skorch_callbacks(model_id, checkpoint_fn,
-                                                    history_fn, pgroups)
+    callbacks = get_classification_skorch_callbacks(
+        model_id, checkpoint_fn, history_fn, pgroups)
 
     net.callbacks.extend(callbacks)
     net.fit(X, y)

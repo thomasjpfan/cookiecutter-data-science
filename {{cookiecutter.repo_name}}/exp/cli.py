@@ -2,7 +2,7 @@ import click
 
 from .linear_model import exp as linear_exp
 from .simple_nn_model import exp as simple_nn_exp
-from .utils import get_params
+from .utils.sacred import get_params
 from .process import get_train, get_test
 
 EXPERIMENTS = {"linear_model": linear_exp, "simple_nn_model": simple_nn_exp}

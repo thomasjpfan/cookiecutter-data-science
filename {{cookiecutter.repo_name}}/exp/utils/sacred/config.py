@@ -33,8 +33,7 @@ def add_common_config(exp, record_local=True):
     exp.add_config(
         run_id=datetime.datetime.utcnow().strftime('%Y%m%d_%H%M%S'),
         record_local=record_local,
-        name=exp.path
-    )
+        name=exp.path)
     params = get_params()
     exp.add_config(**params)
 
@@ -57,10 +56,8 @@ def add_monogodb_from_env(observers):
     mongodb_name = os.environ.get('MONGODB_NAME')
 
     if mongodb_url and mongodb_name:
-        observers.append(MongoObserver.create(
-            url=mongodb_url,
-            db_name=mongodb_name
-        ))
+        observers.append(
+            MongoObserver.create(url=mongodb_url, db_name=mongodb_name))
 
 
 def add_pushover_handler_from_env(log):
