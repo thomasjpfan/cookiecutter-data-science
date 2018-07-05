@@ -12,7 +12,9 @@ from .observers import CSVObserver, ArtifactObserver
 from .logging import get_stream_logger
 
 
-def get_params(root_dir=".", config_fn="neptune.yaml"):
+def get_params(
+        root_dir=".", config_fn="neptune.yaml",
+        raw_root="data/raw", process_root="data/proc"):
     config_fn = os.path.join(root_dir, config_fn)
     with open(config_fn, "r") as f:
         config = yaml.safe_load(f)
@@ -21,10 +23,10 @@ def get_params(root_dir=".", config_fn="neptune.yaml"):
     for key, value in params.items():
         if key.startswith("files__raw_"):
             config['parameters'][key] = Path(
-                os.path.join(root_dir, "data/raw", value))
+                os.path.join(root_dir, raw_root, value))
         elif key.startswith("files__proc_"):
             config['parameters'][key] = Path(
-                os.path.join(root_dir, "data/proc", value))
+                os.path.join(root_dir, process_root, value))
 
     return munchify(params)
 

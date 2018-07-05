@@ -2,7 +2,7 @@
 Create processed files
 """
 import pandas as pd
-from .utils.cache import from_dataframe_cache
+from utils.cache import from_dataframe_cache
 
 
 @from_dataframe_cache('files__proc_train')

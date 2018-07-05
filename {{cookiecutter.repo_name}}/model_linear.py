@@ -9,7 +9,7 @@ from sklearn.metrics import mean_squared_error
 import numpy as np
 import scipy.stats
 
-from .utils.sacred import add_common_config, get_params
+from utils.sacred import add_common_config, get_params
 
 exp = Experiment("linear_model")
 exp.add_config(tags=["linear_model"])

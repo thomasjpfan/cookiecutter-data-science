@@ -9,8 +9,8 @@ import torch.nn.functional as F
 
 from skorch import NeuralNetClassifier
 
-from .utils import get_classification_skorch_callbacks
-from .utils.sacred import add_common_config, get_params
+from utils import get_classification_skorch_callbacks
+from utils.sacred import add_common_config, get_params
 
 exp = Experiment("simple_nn_model")
 exp.add_config(tags=["simple_nn_model"])
