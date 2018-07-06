@@ -9,9 +9,10 @@ metric:
   goal: maximize
 
 exclude:
+  - __pycache__
   - artifacts
   - data
-  - exp
+  - models
   - notebooks
   - .git
   - .gitignore
