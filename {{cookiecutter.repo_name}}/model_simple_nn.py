@@ -1,7 +1,6 @@
 """Linear Model"""
 import os
 
-from sacred import Experiment
 import numpy as np
 from sklearn.datasets import make_classification
 from torch import nn
@@ -9,13 +8,11 @@ import torch.nn.functional as F
 
 from skorch import NeuralNetClassifier
 
-from utils import get_classification_skorch_callbacks
-from utils.sacred import add_common_config, get_params
+from mltome import get_classification_skorch_callbacks
+from mltome.sacred import generate_experiment_params_from_env
 
-exp = Experiment("simple_nn_model")
-exp.add_config(tags=["simple_nn_model"])
-add_common_config(exp, record_local=True)
-params = get_params()
+exp, params = generate_experiment_params_from_env(
+    "simple_nn_model", tags=["simple_nn_model"])
 
 
 class MyModule(nn.Module):
@@ -76,8 +73,8 @@ def train(model_id, run_dir, _log, _run):
     ]
     net.set_params(optimizer__param_groups=pgroups)
 
-    callbacks = get_classification_skorch_callbacks(
-        model_id, checkpoint_fn, history_fn, pgroups)
+    callbacks = get_classification_skorch_callbacks(model_id, checkpoint_fn,
+                                                    history_fn, pgroups)
 
     net.callbacks.extend(callbacks)
     net.fit(X, y)

@@ -1,7 +1,6 @@
 """Linear Model"""
 import os
 
-from sacred import Experiment
 from sklearn.linear_model import Ridge
 from sklearn.externals import joblib
 from sklearn.model_selection import cross_val_score, train_test_split, RandomizedSearchCV
@@ -9,12 +8,10 @@ from sklearn.metrics import mean_squared_error
 import numpy as np
 import scipy.stats
 
-from utils.sacred import add_common_config, get_params
+from mltome.sacred import generate_experiment_params_from_env
 
-exp = Experiment("linear_model")
-exp.add_config(tags=["linear_model"])
-add_common_config(exp, record_local=True)
-params = get_params()
+exp, params = generate_experiment_params_from_env(
+    "linear_model", tags=["linear_model"])
 
 
 @exp.command
