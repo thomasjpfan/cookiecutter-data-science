@@ -12,7 +12,7 @@ exclude:
   - __pycache__
   - artifacts
   - data
-  - models
+  - model*.py
   - notebooks
   - .git
   - .gitignore

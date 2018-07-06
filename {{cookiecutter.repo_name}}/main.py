@@ -2,9 +2,9 @@ import click
 
 from mltome import get_params
 
-from models.linear import exp as linear_exp
-from models.simple_nn import exp as simple_nn_exp
-from models.text import exp as text_exp
+from model_linear import exp as linear_exp
+from model_simple_nn import exp as simple_nn_exp
+from model_text import exp as text_exp
 from process import get_train, get_test
 
 EXPERIMENTS = {
