@@ -2,7 +2,7 @@
 import os
 
 from sklearn.linear_model import Ridge
-from sklearn.externals import joblib
+import joblib
 from sklearn.model_selection import cross_val_score, train_test_split
 from sklearn.metrics import mean_squared_error
 from dask_ml.model_selection import RandomizedSearchCV
@@ -13,9 +13,6 @@ from mltome.sacred import generate_experiment_params_from_env
 
 exp, params = generate_experiment_params_from_env(
     "linear_model", tags=["linear_model"])
-
-# from dask.distributed import Client
-# client = Client('192.168.2.24:8786')
 
 
 @exp.command
