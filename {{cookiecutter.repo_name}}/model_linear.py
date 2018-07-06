@@ -6,7 +6,6 @@ from sklearn.externals import joblib
 from sklearn.model_selection import cross_val_score, train_test_split
 from sklearn.metrics import mean_squared_error
 from dask_ml.model_selection import RandomizedSearchCV
-# from dask.distributed import Client
 import numpy as np
 import scipy.stats
 
@@ -15,8 +14,8 @@ from mltome.sacred import generate_experiment_params_from_env
 exp, params = generate_experiment_params_from_env(
     "linear_model", tags=["linear_model"])
 
-# scheduler_address = '127.0.0.1:8786'
-# client = Client(scheduler_address)
+# from dask.distributed import Client
+# client = Client('192.168.2.24:8786')
 
 
 @exp.command
