@@ -12,8 +12,7 @@ import numpy as np
 
 from mltome.sacred import generate_experiment_params_from_env
 
-exp, params = generate_experiment_params_from_env(
-    "text_model", tags=["text_model"])
+exp, params = generate_experiment_params_from_env("text", tags=["text"])
 
 categories = [
     'alt.atheism',

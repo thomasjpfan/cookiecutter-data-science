@@ -11,8 +11,7 @@ import scipy.stats
 
 from mltome.sacred import generate_experiment_params_from_env
 
-exp, params = generate_experiment_params_from_env(
-    "linear_model", tags=["linear_model"])
+exp, params = generate_experiment_params_from_env("linear", tags=["linear"])
 
 
 @exp.command

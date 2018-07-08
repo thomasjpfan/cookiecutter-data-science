@@ -31,12 +31,15 @@ def cli():
 @click.argument('cmd', type=click.Choice(['train', 'predict', 'train_hp']))
 @click.option('-id', '--run-id', help='run id')
 @click.option(
-    '-rl', '--record-local', help='record to local csv', is_flag=True)
-def run(experiment, cmd, run_id, record_local):
+    '-nrl',
+    '--not-record-local',
+    help='do not record to local csv',
+    is_flag=True)
+def run(experiment, cmd, run_id, not_record_local):
     exp = EXPERIMENTS[experiment]
 
     config = dict()
-    config['record_local'] = record_local
+    config['record_local'] = not not_record_local
     if run_id:
         config['run_id'] = run_id
 

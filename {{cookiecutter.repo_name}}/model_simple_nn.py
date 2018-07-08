@@ -12,7 +12,7 @@ from mltome import get_classification_skorch_callbacks
 from mltome.sacred import generate_experiment_params_from_env
 
 exp, params = generate_experiment_params_from_env(
-    "simple_nn_model", tags=["simple_nn_model"])
+    "simple_nn", tags=["simple_nn"])
 
 
 class MyModule(nn.Module):
