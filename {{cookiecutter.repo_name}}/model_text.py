@@ -10,9 +10,9 @@ from dask_ml.model_selection import GridSearchCV
 import joblib
 import numpy as np
 
-from mltome.sacred import generate_experiment_params_from_env
+from utils import generate_experiment_params_from_env
 
-exp, params = generate_experiment_params_from_env("text", tags=["text"])
+exp, params, n_ctx = generate_experiment_params_from_env("text", tags=["text"])
 
 categories = [
     'alt.atheism',

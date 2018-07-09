@@ -1,6 +1,6 @@
 ---
 # neptune specific
-project: {{ cookiecutter.repo_name }}
+project: {{ cookiecutter.github_username }}/{{ cookiecutter.repo_name }}
 
 name: {{ cookiecutter.repo_name }}
 
@@ -22,6 +22,9 @@ exclude:
   - neptune.log
   - offline_job.log
   - requirements.txt
+  - utils.py
+  - process.py
+  - main.py
 
 parameters:
   # files

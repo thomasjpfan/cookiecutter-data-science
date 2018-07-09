@@ -2,5 +2,6 @@
     "project_name": "dsproject",
     "repo_name": "{{ cookiecutter.project_name.lower().replace(' ', '_') }}",
     "author_name": "Thomas Fan",
+    "github_username": "thomasjpfan",
     "include_test_csv": ["False", "True"]
 }

@@ -9,9 +9,9 @@ import torch.nn.functional as F
 from skorch import NeuralNetClassifier
 
 from mltome import get_classification_skorch_callbacks
-from mltome.sacred import generate_experiment_params_from_env
+from utils import generate_experiment_params_from_env
 
-exp, params = generate_experiment_params_from_env(
+exp, params, n_ctx = generate_experiment_params_from_env(
     "simple_nn", tags=["simple_nn"])
 
 
@@ -73,8 +73,8 @@ def train(model_id, run_dir, _log, _run):
     ]
     net.set_params(optimizer__param_groups=pgroups)
 
-    callbacks = get_classification_skorch_callbacks(model_id, checkpoint_fn,
-                                                    history_fn, pgroups)
+    callbacks = get_classification_skorch_callbacks(
+        model_id, checkpoint_fn, history_fn, pgroups, neptune_ctx=n_ctx)
 
     net.callbacks.extend(callbacks)
     net.fit(X, y)

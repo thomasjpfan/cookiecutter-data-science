@@ -9,9 +9,10 @@ from dask_ml.model_selection import RandomizedSearchCV
 import numpy as np
 import scipy.stats
 
-from mltome.sacred import generate_experiment_params_from_env
+from utils import generate_experiment_params_from_env
 
-exp, params = generate_experiment_params_from_env("linear", tags=["linear"])
+exp, params, n_ctx = generate_experiment_params_from_env(
+    "linear", tags=["linear"])
 
 
 @exp.command
