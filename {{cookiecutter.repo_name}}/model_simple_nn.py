@@ -71,7 +71,9 @@ def train(model_id, run_dir, _log, _run):
             'lr': 0.02
         }),
     ]
+
     net.set_params(optimizer__param_groups=pgroups)
+    net.set_params(callbacks__print_log__sink=_log.info)
 
     callbacks = get_classification_skorch_callbacks(
         model_id,
