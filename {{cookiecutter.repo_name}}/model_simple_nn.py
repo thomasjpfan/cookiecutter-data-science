@@ -74,7 +74,12 @@ def train(model_id, run_dir, _log, _run):
     net.set_params(optimizer__param_groups=pgroups)
 
     callbacks = get_classification_skorch_callbacks(
-        model_id, checkpoint_fn, history_fn, pgroups, neptune_ctx=n_ctx)
+        model_id,
+        checkpoint_fn,
+        history_fn,
+        pgroups,
+        log_func=_log.info,
+        neptune_ctx=n_ctx)
 
     net.callbacks.extend(callbacks)
     net.fit(X, y)
