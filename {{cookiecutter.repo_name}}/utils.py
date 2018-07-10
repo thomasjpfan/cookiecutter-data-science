@@ -1,9 +1,12 @@
 import os
 from sacred import Experiment
+from sacred.settings import SETTINGS
 
 from mltome.sacred.config import (add_common_config, add_monogodb,
                                   add_neptune_observers, add_pushover_handler)
 from mltome import get_params
+
+SETTINGS.CAPTURE_MODE = 'sys'
 
 
 def generate_experiment_params_from_env(name,
