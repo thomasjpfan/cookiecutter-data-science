@@ -7,10 +7,8 @@ Insert description of project.
 ```bash
 pip install -r requirements.txt
 ./download.sh
-python main.py process train
-python main.py process test
-python main.py run linear_model train -id latest -rl
-python main.py run linear_model predict -id latest
+python main.py run linear train -id latest
+python main.py run linear predict -id latest
 ```
 
 ## Observing experiments
@@ -57,5 +55,5 @@ export USE_NEPTUNE=true
 To upload metrics to neptune append `neptune run` to commands:
 
 ```bash
-neptune run --open-webbrowser false main.py run linear_model train -id latest -rl
+neptune run --open-webbrowser false main.py run linear train -id latest
 ```
