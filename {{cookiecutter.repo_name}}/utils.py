@@ -22,7 +22,10 @@ def generate_experiment_params_from_env(name,
         config_fn=config_fn,
         raw_root=raw_root,
         process_root=process_root)
-    exp.add_config(**params)
+
+    str_params = {k: str(v) for k, v in params.items()}
+
+    exp.add_config(**str_params)
 
     exp.add_config(tags=tags)
     add_common_config(exp, csv_fn, record_local=record_local)
