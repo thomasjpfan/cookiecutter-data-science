@@ -1,4 +1,4 @@
-import click
+import argparse
 
 from mltome import get_params
 
@@ -21,21 +21,12 @@ PROCESS_CHOICES = [
 ]
 
 
-@click.group()
-def cli():
-    pass
+def run(args):
+    experiment = args.experiment
+    cmd = args.cmd
+    run_id = args.run_id
+    not_record_local = args.not_record_local
 
-
-@cli.command()
-@click.argument('experiment', type=click.Choice(EXPERIMENTS))
-@click.argument('cmd', type=click.Choice(['train', 'predict', 'train_hp']))
-@click.option('-id', '--run-id', help='run id')
-@click.option(
-    '-nrl',
-    '--not-record-local',
-    help='do not record to local csv',
-    is_flag=True)
-def run(experiment, cmd, run_id, not_record_local):
     exp = EXPERIMENTS[experiment]
 
     config = dict()
@@ -46,26 +37,52 @@ def run(experiment, cmd, run_id, not_record_local):
     exp.run(command_name=cmd, config_updates=config)
 
 
-@cli.command()
-@click.argument('key', type=click.Choice(PROCESS_CHOICES))
-@click.option('-f', '--force', is_flag=True)
-def process(key, force):
+def process(args):
+    key = args.key
+    force = args.force
+
     params = get_params()
 
     key = f'files__proc_{key}'
     try:
         process_fn = params[key]
     except KeyError:
-        click.echo(f'files/processed/{key} does not exists in params')
+        print(f'files/processed/{key} does not exists in params')
         return
 
     if process_fn.exists() and not force:
-        click.echo(f'{process_fn} already exists, use --force')
+        print(f'{process_fn} already exists, use --force')
         return
 
-    click.echo(f'Processing {key} filename: {process_fn}')
+    print(f'Processing {key} filename: {process_fn}')
     PROCESS_FUNCS[key](params, force)
 
 
 if __name__ == '__main__':
-    cli()
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers()
+
+    process_parser = subparsers.add_parser('process')
+    process_parser.add_argument(
+        'key', choices=PROCESS_CHOICES, help='key of processed file')
+    process_parser.add_argument(
+        '-f', '--force', action='store_true', help='rerun processing for key')
+    process_parser.set_defaults(func=process)
+
+    run_parser = subparsers.add_parser('run')
+    run_parser.add_argument(
+        'experiment', choices=EXPERIMENTS, help='key of model to run')
+    run_parser.add_argument(
+        'cmd',
+        choices=['train', 'predict', 'train_hp'],
+        help='command to run on model')
+    run_parser.add_argument('-id', '--run-id', help='run id')
+    run_parser.add_argument(
+        '-nrl',
+        '--not-record-local',
+        action='store_true',
+        help='do not record to local csv')
+    run_parser.set_defaults(func=run)
+
+    args = parser.parse_args()
+    args.func(args)

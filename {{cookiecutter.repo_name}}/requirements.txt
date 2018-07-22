@@ -4,7 +4,6 @@ sklearn
 scipy
 PyYAML
 munch
-click
 pyarrow
 -e git+https://github.com/thomasjpfan/mltome
 dask-ml
