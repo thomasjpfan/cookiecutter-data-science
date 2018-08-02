@@ -14,10 +14,7 @@ dl_kaggle() {
 }
 
 dl_kaggle_all() {
-	all_files=$(kaggle competitions files -c home-credit-default-risk -v | tail -n +2 | cut -d ',' -f 1)
-	for filename in "$all_files"; do
-		dl_kaggle "$filename"
-	done
+	kaggle competitions download -c "$NAME" --wp
 }
 
 extract() {
