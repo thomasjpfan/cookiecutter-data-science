@@ -4,17 +4,18 @@ set -eo pipefail
 NAME=""
 
 dl_kaggle() {
-	local filename="$1"
-	if [ -f "$filename" ]; then
-		echo "$filename already downloaded"
+	local serve_fn="$1"
+	local local_fn="$2"
+	if [ -f "$local_fn" ]; then
+		echo "$local_fn already downloaded"
 		return
 	fi
-	echo "Downloading ${filename}"
-	kaggle competitions download -c $NAME -f "$filename" -w
+	echo "Downloading ${serve_fn}"
+	kaggle competitions download -c $NAME -f "$serve_fn" -w
 }
 
 dl_kaggle_all() {
-	kaggle competitions download -c "$NAME" --wp
+	kaggle competitions download -c "$NAME" -w
 }
 
 extract() {
@@ -40,9 +41,7 @@ extract() {
 				*.xz) unxz ./"$n" ;;
 				*.exe) cabextract ./"$n" ;;
 				*.cpio) cpio -id <./"$n" ;;
-				*)
-					echo "extract: '$n' - unknown archive method"
-					;;
+				*) ;;
 				esac
 			else
 				echo "'$n' - file does not exist"
@@ -65,5 +64,3 @@ extract_single() {
 }
 
 cd data/raw
-
-dl_kaggle_all
