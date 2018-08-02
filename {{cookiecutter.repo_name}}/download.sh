@@ -67,4 +67,3 @@ extract_single() {
 cd data/raw
 
 dl_kaggle_all
-extract *
