@@ -42,7 +42,6 @@ extract() {
 				*.cpio) cpio -id <./"$n" ;;
 				*)
 					echo "extract: '$n' - unknown archive method"
-					return 1
 					;;
 				esac
 			else
@@ -66,3 +65,6 @@ extract_single() {
 }
 
 cd data/raw
+
+dl_kaggle_all
+extract *
