@@ -5,9 +5,8 @@ NAME=""
 
 dl_kaggle() {
 	local serve_fn="$1"
-	local local_fn="$2"
-	if [ -f "$local_fn" ]; then
-		echo "$local_fn already downloaded"
+	if [ -f "$serve_fn" ]; then
+		echo "$serve_fn already downloaded"
 		return
 	fi
 	echo "Downloading ${serve_fn}"
@@ -64,3 +63,16 @@ extract_single() {
 }
 
 cd data/raw
+
+# kaggle competitions files -c "$NAME"
+kaggle_fns=()
+
+for fn in ${kaggle_fns[@]}; do
+	dl_kaggle $fn
+done
+
+# compressed_fns=("application_test.csv.zip")
+
+# for fn in ${compressed_fns[@]}; do
+# 	extract_single $fn ${fn/%.zip/}
+# done
