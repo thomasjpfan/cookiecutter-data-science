@@ -1,6 +1,4 @@
 """Text Model"""
-import os
-
 from sklearn.datasets import fetch_20newsgroups
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
@@ -10,7 +8,7 @@ from dask_ml.model_selection import GridSearchCV
 import joblib
 import numpy as np
 
-from utils import generate_experiment_params_from_env
+from utils import generate_experiment_params_from_env, normalize_params
 
 exp, params, n_ctx = generate_experiment_params_from_env("text", tags=["text"])
 
@@ -22,20 +20,21 @@ categories = [
 
 @exp.command
 def predict(model_id, run_dir, _log):
-    model_fn = os.path.join(run_dir, params.text__model_fn)
-    predict_fn = os.path.join(run_dir, params.text__prediction_fn)
+    p = normalize_params(params, run_dir)
 
     test_data = fetch_20newsgroups(subset='test', categories=categories)
-    text_model = joblib.load(model_fn)
+    text_model = joblib.load(p.text__model_fn)
     y_predict = text_model.predict(test_data.data)
-    np.save(predict_fn, y_predict)
+    np.save(p.text__prediction_fn, y_predict)
     _log.info(f"Finished prediction, model_id: {model_id}")
 
 
 @exp.command
 def train_hp(model_id, run_dir, _log, _run):
+    p = normalize_params(params, run_dir)
+
     from dask.distributed import Client
-    client = Client('192.168.2.24:8786')
+    client = Client('192.168.2.34:8786')
 
     data = fetch_20newsgroups(subset='train', categories=categories)
 
@@ -63,8 +62,7 @@ def train_hp(model_id, run_dir, _log, _run):
     test_score = grid_search.score(test_data.data, test_data.target)
     best_params = grid_search.best_params_
 
-    model_fn = os.path.join(run_dir, params.text__model_fn)
-    joblib.dump(grid_search.best_estimator_, model_fn)
+    joblib.dump(grid_search.best_estimator_, p.text__model_fn)
 
     _log.warning(
         f"Finished hyperparameter search model_id: {model_id}, test_score: "

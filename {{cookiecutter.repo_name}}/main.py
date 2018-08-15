@@ -1,21 +1,9 @@
 import argparse
 
-from mltome import get_params
+from utils import get_params
 
-from model_linear import exp as linear_exp
-from model_simple_nn import exp as simple_nn_exp
-from model_text import exp as text_exp
-from process import get_train, get_test
+from settings import EXPERIMENTS, PROCESS_FUNCS
 
-EXPERIMENTS = {
-    "linear": linear_exp,
-    "simple_nn": simple_nn_exp,
-    "text": text_exp,
-}
-PROCESS_FUNCS = {
-    "files__proc_train": get_train,
-    "files__proc_test": get_test,
-}
 PROCESS_CHOICES = [
     key.split("files__proc_", maxsplit=1)[1] for key in PROCESS_FUNCS
 ]

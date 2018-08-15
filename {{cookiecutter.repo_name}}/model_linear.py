@@ -1,6 +1,4 @@
 """Linear Model"""
-import os
-
 from sklearn.linear_model import Ridge
 import joblib
 from sklearn.model_selection import cross_val_score, train_test_split
@@ -9,7 +7,7 @@ from dask_ml.model_selection import RandomizedSearchCV
 import numpy as np
 import scipy.stats
 
-from utils import generate_experiment_params_from_env
+from utils import generate_experiment_params_from_env, normalize_params
 
 exp, params, n_ctx = generate_experiment_params_from_env(
     "linear", tags=["linear"])
@@ -17,14 +15,13 @@ exp, params, n_ctx = generate_experiment_params_from_env(
 
 @exp.command
 def predict(model_id, run_dir, _log):
-    model_fn = os.path.join(run_dir, params.ridge__model_fn)
-    predict_fn = os.path.join(run_dir, params.ridge__prediction_fn)
+    p = normalize_params(params, run_dir)
 
     # Prediction task
     X = np.random.rand(100).reshape(-1, 1)
-    linear_model = joblib.load(model_fn)
+    linear_model = joblib.load(p.ridge__model_fn)
     y_predict = linear_model.predict(X)
-    np.save(predict_fn, y_predict)
+    np.save(p.ridge__prediction_fn, y_predict)
 
     _log.info(f"Finished prediction, model_id: {model_id}")
 
@@ -54,6 +51,7 @@ def train_hp(model_id, _log, _run):
 
 @exp.command
 def train(model_id, run_dir, _log, _run):
+    p = normalize_params(params, run_dir)
 
     X = np.random.rand(300).reshape(-1, 1)
     y = 4 * X + np.random.randn(300, 1) * 0.5
@@ -67,9 +65,8 @@ def train(model_id, run_dir, _log, _run):
     linear_model.fit(X, y)
     train_score = mean_squared_error(y, linear_model.predict(X))
 
-    model_fn = os.path.join(run_dir, params.ridge__model_fn)
-    joblib.dump(linear_model, model_fn)
-    _run.add_artifact(model_fn)
+    joblib.dump(linear_model, p.ridge__model_fn)
+    _run.add_artifact(p.ridge__model_fn)
 
     _log.warning(f"Finished training, model_id: {model_id}, val_score: "
                  f"{valid_score:0.6}+/-{valid_score_std:0.6}, "

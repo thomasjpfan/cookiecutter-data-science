@@ -1,6 +1,4 @@
 """Linear Model"""
-import os
-
 import numpy as np
 from sklearn.datasets import make_classification
 from torch import nn
@@ -8,8 +6,8 @@ import torch.nn.functional as F
 
 from skorch import NeuralNetClassifier
 
-from mltome import get_classification_skorch_callbacks
-from utils import generate_experiment_params_from_env
+from utils import (generate_experiment_params_from_env,
+                   get_classification_skorch_callbacks, normalize_params)
 
 exp, params, n_ctx = generate_experiment_params_from_env(
     "simple_nn", tags=["simple_nn"])
@@ -38,16 +36,15 @@ net = NeuralNetClassifier(MyModule, max_epochs=10, lr=0.1, callbacks=[])
 
 @exp.command
 def predict(model_id, run_dir, _log):
-    model_fn = os.path.join(run_dir, params.simple_nn__model_fn)
-    predict_fn = os.path.join(run_dir, params.simple_nn__prediction_fn)
+    p = normalize_params(params, run_dir)
 
     X, _ = make_classification(1000, 20, n_informative=10, random_state=0)
     X = X.astype(np.float32)
     net.initialize()
-    net.load_params(model_fn)
+    net.load_params(p.simple_nn__model_fn)
 
     y_predict = net.predict_proba(X)
-    np.save(predict_fn, y_predict)
+    np.save(p.simple_nn__prediction_fn, y_predict)
 
     _log.info(f"Finished prediction, model_id: {model_id}")
 
@@ -59,8 +56,7 @@ def train_hp(model_id, _log, _run):
 
 @exp.command
 def train(model_id, run_dir, _log, _run):
-    checkpoint_fn = os.path.join(run_dir, params.simple_nn__model_fn)
-    history_fn = os.path.join(run_dir, params.simple_nn__history_fn)
+    p = normalize_params(params, run_dir)
 
     X, y = make_classification(1000, 20, n_informative=10, random_state=0)
     X = X.astype(np.float32)
@@ -77,8 +73,8 @@ def train(model_id, run_dir, _log, _run):
 
     callbacks = get_classification_skorch_callbacks(
         model_id,
-        checkpoint_fn,
-        history_fn,
+        p.simple_nn__model_fn,
+        p.simple_nn__history_fn,
         pgroups,
         log_func=_log.info,
         neptune_ctx=n_ctx)
