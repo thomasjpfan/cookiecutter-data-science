@@ -85,8 +85,8 @@ def train(model_id, run_dir, _log, _run):
     valid_score = net.history[-1, 'valid_acc']
     train_score = net.history[-1, 'train_acc']
 
-    _log.warning(f"Finished training, model_id: {model_id}, val_score: "
-                 f"{valid_score:0.6}, "
-                 f"train_score: {train_score:0.6}")
+    _log.info(f"Finished training, model_id: {model_id}, val_score: "
+              f"{valid_score:0.6}, "
+              f"train_score: {train_score:0.6}")
     # valid score/error, train score/error
     return [valid_score, train_score]

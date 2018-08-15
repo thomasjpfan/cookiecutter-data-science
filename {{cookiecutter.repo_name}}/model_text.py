@@ -64,7 +64,7 @@ def train_hp(model_id, run_dir, _log, _run):
 
     joblib.dump(grid_search.best_estimator_, p.text__model_fn)
 
-    _log.warning(
+    _log.info(
         f"Finished hyperparameter search model_id: {model_id}, test_score: "
         f"{test_score:0.6}, train_score: {train_score:0.6}, "
         f"params: {best_params}")

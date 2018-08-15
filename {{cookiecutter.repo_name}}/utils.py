@@ -9,7 +9,7 @@ from sacred.utils import apply_backspaces_and_linefeeds
 from munch import munchify
 
 from mltome.sacred.config import (add_monogodb, add_neptune_observers,
-                                  add_pushover_handler)
+                                  add_pushover_observer)
 
 from mltome.sacred.observers import CSVObserver, ArtifactObserver
 from mltome.logging import get_stream_logger
@@ -100,7 +100,7 @@ def generate_experiment_params_from_env(name,
         neptune_ctx = neptune.Context()
 
     add_monogodb(exp.observers, mongodb_url, mongodb_name)
-    add_pushover_handler(exp.logger, pushover_user_token, pushover_token)
+    add_pushover_observer(exp.observers, pushover_user_token, pushover_token)
     add_neptune_observers(exp.observers, 'model_id', 'tags', ctx=neptune_ctx)
 
     return exp, params, neptune_ctx

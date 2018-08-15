@@ -41,7 +41,7 @@ def train_hp(model_id, _log, _run):
     train_score = mean_squared_error(y_train, rs.predict(X_train))
     test_score = mean_squared_error(y_test, rs.predict(X_test))
 
-    _log.warning(
+    _log.info(
         f"Finished hyperparameter search model_id: {model_id}, test_score: "
         f"{test_score:0.6}, train_score: {train_score:0.6}, "
         f"params: {rs.best_params_}")
@@ -68,8 +68,8 @@ def train(model_id, run_dir, _log, _run):
     joblib.dump(linear_model, p.ridge__model_fn)
     _run.add_artifact(p.ridge__model_fn)
 
-    _log.warning(f"Finished training, model_id: {model_id}, val_score: "
-                 f"{valid_score:0.6}+/-{valid_score_std:0.6}, "
-                 f"train_score: {train_score:0.6}")
+    _log.info(f"Finished training, model_id: {model_id}, val_score: "
+              f"{valid_score:0.6}+/-{valid_score_std:0.6}, "
+              f"train_score: {train_score:0.6}")
     # valid score/error, train score/error
     return [valid_score, train_score]
