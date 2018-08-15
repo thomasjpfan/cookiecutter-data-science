@@ -35,6 +35,8 @@ def train_hp(model_id, run_dir, _log, _run):
 
     from dask.distributed import Client
     client = Client('localhost:8786')
+    workers = client.ncores()
+    _log.info(f"Dask distributed: Connected to {workers}")
 
     data = fetch_20newsgroups(subset='train', categories=categories)
 
