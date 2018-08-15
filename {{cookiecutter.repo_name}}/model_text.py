@@ -34,7 +34,7 @@ def train_hp(model_id, run_dir, _log, _run):
     p = normalize_params(params, run_dir)
 
     from dask.distributed import Client
-    client = Client('192.168.2.34:8786')
+    client = Client('localhost:8786')
 
     data = fetch_20newsgroups(subset='train', categories=categories)
 
