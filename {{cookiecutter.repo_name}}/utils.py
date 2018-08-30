@@ -96,7 +96,7 @@ def generate_experiment_params_from_env(name,
 
     neptune_ctx = None
     if use_neptune:
-        from deepsense import neptune
+        import neptune
         neptune_ctx = neptune.Context()
 
     add_monogodb(exp.observers, mongodb_url, mongodb_name)
