@@ -7,53 +7,16 @@ Insert description of project.
 ```bash
 pip install -r requirements.txt
 ./download.sh
-python main.py run linear train -id latest
-python main.py run linear predict -id latest
+python model_linear.py train -id latest
+python model_linear.py predict -id latest
 ```
 
 ## Observing experiments
 
-### Using MongoDB to store experiment results
-
-Install mongodb: `pip install pymongo`. Then add a `.envrc` file and use `direnv`!
-
-```bash
-# .envrc
-export MONGODB_URL=mongodb://test:abc@localhost:27017/boo?authMechanism=SCRAM-SHA-1
-export MONGODB_NAME=boo
-```
-
-### Sacredboard to view experiments
-
-To run sacredboard:
-
-```bash
-sacredboard -mu $MONGODB_URL $MONGODB_NAME
-```
-
-### Using Pushover for notifications
-
-Install notifiers: `pip install notifiers`. Add notifier env vars to `.envrc`:
-
-```bash
-# .envrc
-export NOTIFIERS_PUSHOVER_TOKEN=FOO
-export NOTIFIERS_PUSHOVER_USER=BAR
-```
-
-Logs with level `INFO` and higher will be logged to pushover.
-
 ### Using Neptune to log experiments
 
-Install neptune: `pip install neptune-cli`. Add neptune envs to `.envrc`:
+Install neptune: `pip install neptune-cli`. To upload metrics to neptune append `neptune run` to commands:
 
 ```bash
-# .envrc
-export USE_NEPTUNE=true
-```
-
-To upload metrics to neptune append `neptune run` to commands:
-
-```bash
-neptune run --open-webbrowser false main.py run linear train -id latest
+neptune run --open-webbrowser false model_linear.py train -id latest
 ```

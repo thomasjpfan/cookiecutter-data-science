@@ -1,57 +1,54 @@
 import os
-from pathlib import Path
 import datetime
+from pathlib import Path
+import argparse
+import logging
+from pprint import pformat
 
 import yaml
-from sacred import Experiment
-from sacred import SETTINGS
-from sacred.utils import apply_backspaces_and_linefeeds
 from munch import munchify
 
-from mltome.sacred.config import (add_monogodb, add_neptune_observers,
-                                  add_pushover_observer)
 
-from mltome.sacred.observers import CSVObserver, ArtifactObserver
-from mltome.logging import get_stream_logger
+def get_log_file_handler(log_fn, level=logging.INFO):
+    file_handler = logging.FileHandler(log_fn)
+    file_handler.setLevel(level)
+    file_handler.setFormatter(logging.Formatter('%(message)s'))
+    return file_handler
 
-SETTINGS.CAPTURE_MODE = 'no'
+
+def get_stream_logger(name, level=logging.INFO):
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+
+    stream_handler = logging.StreamHandler()
+    stream_handler.setLevel(level)
+    stream_handler.setFormatter(logging.Formatter('%(message)s'))
+
+    logger.addHandler(stream_handler)
+
+    return logger
 
 
 def get_params(root_dir=".",
                config_fn="neptune.yaml",
                raw_root="data/raw",
-               process_root="data/proc"):
+               process_root="data/proc",
+               raw_key_root="files__raw_",
+               process_key_root="files__proc_"):
     config_fn = os.path.join(root_dir, config_fn)
     with open(config_fn, "r") as f:
         config = yaml.safe_load(f)
 
     params = config['parameters']
     for key, value in params.items():
-        if key.startswith("files__raw_"):
+        if key.startswith(raw_key_root):
             config['parameters'][key] = Path(
                 os.path.join(root_dir, raw_root, value))
-        elif key.startswith("files__proc_"):
+        elif key.startswith(process_key_root):
             config['parameters'][key] = Path(
                 os.path.join(root_dir, process_root, value))
 
     return munchify(params)
-
-
-def add_common_config(exp, csv_fn, record_local=True):
-    exp.add_config(
-        run_id=datetime.datetime.utcnow().strftime('%Y%m%d_%H%M%S'),
-        record_local=record_local,
-        name=exp.path)
-
-    @exp.config
-    def run_dir_config(name, run_id):
-        model_id = f"{name}_{run_id}"  # noqa
-        run_dir = os.path.join('artifacts', model_id)  # noqa
-
-    exp.logger = get_stream_logger(exp.path)
-    exp.observers.append(CSVObserver(csv_fn))
-    exp.observers.append(ArtifactObserver(exp.logger))
-    exp.captured_out_filter = apply_backspaces_and_linefeeds
 
 
 def normalize_params(params, run_dir):
@@ -64,46 +61,72 @@ def normalize_params(params, run_dir):
     return munchify(output)
 
 
-def generate_experiment_params_from_env(name,
-                                        tags=None,
-                                        record_local=True,
-                                        csv_fn='artifacts/result.csv',
-                                        root_dir=".",
-                                        config_fn="neptune.yaml",
-                                        raw_root="data/raw",
-                                        process_root="data/proc"):
+def run_cli(func_dict,
+            model_name,
+            tags=None,
+            root_dir=".",
+            config_fn="neptune.yaml",
+            raw_root="data/raw",
+            process_root="data/proc"):
+
     if tags is None:
         tags = []
-    exp = Experiment(name)
+
+    parser = argparse.ArgumentParser()
+
+    func_choices = list(func_dict.keys())
+
+    parser.add_argument(
+        'cmd', choices=func_choices, help='command to run on model')
+    parser.add_argument('-id', '--run-id', help='run id')
+    parser.add_argument('-d', '--debug', action='store_true', help='debug')
+
+    args = parser.parse_args()
+    debug = args.debug
+    run_id = args.run_id or datetime.datetime.utcnow().strftime(
+        '%Y-%m-%dT%H-%M-%S')
+
     params = get_params(
         root_dir=root_dir,
         config_fn=config_fn,
         raw_root=raw_root,
         process_root=process_root)
 
-    str_params = {k: str(v) for k, v in params.items()}
+    log_level = logging.DEBUG if debug else logging.INFO
+    log = get_stream_logger(model_name, level=log_level)
 
-    exp.add_config(**str_params)
+    model_id = f"{model_name}_{run_id}"
+    run_dir = os.path.join('artifacts', model_id)
 
-    exp.add_config(tags=tags)
-    add_common_config(exp, csv_fn, record_local=record_local)
+    os.makedirs(run_dir, exist_ok=True)
 
-    mongodb_url = os.environ.get('MONGODB_URL')
-    mongodb_name = os.environ.get('MONGODB_NAME')
-    pushover_user_token = os.environ.get('NOTIFIERS_PUSHOVER_USER')
-    pushover_token = os.environ.get('NOTIFIERS_PUSHOVER_TOKEN')
-    use_neptune = os.environ.get('USE_NEPTUNE') == 'true'
+    log_fn = os.path.join(run_dir, f'log_{args.cmd}.txt')
+    file_hander = get_log_file_handler(log_fn)
+    log.addHandler(file_hander)
+
+    p = normalize_params(params, run_dir)
+
+    model_params = {k: v for k, v in p.items() if k.startswith(model_name)}
+    log.info(pformat(model_params))
 
     neptune_ctx = None
-    if use_neptune:
+    if "NEPTUNE_ONLINE_CONTEXT" in os.environ:
         import neptune
         neptune_ctx = neptune.Context()
+        neptune_ctx.properties["model_id"] = model_id
+        for tag in tags:
+            neptune_ctx.tags.append(tag)
 
-    add_monogodb(exp.observers, mongodb_url, mongodb_name)
-    add_pushover_observer(exp.observers, pushover_user_token, pushover_token)
-    add_neptune_observers(exp.observers, 'model_id', 'tags', ctx=neptune_ctx)
+    output = func_dict[args.cmd](model_id, p, run_dir, log) or {}
 
-    return exp, params, neptune_ctx
+    if not debug:
+        from mlflow import log_metric, log_artifact, log_param
+        for k, v in output.items():
+            log_metric(k, v)
+            if neptune_ctx is not None:
+                neptune_ctx.channel_send(k, v)
+        log_artifact(log_fn)
+        log_param("model_id", model_id)
 
 
 def get_classification_skorch_callbacks(model_id,
@@ -111,7 +134,6 @@ def get_classification_skorch_callbacks(model_id,
                                         history_fn,
                                         pgroups,
                                         log_func=print,
-                                        neptune_ctx=None,
                                         per_epoch=True):
 
     from skorch.callbacks import EpochScoring
@@ -144,8 +166,10 @@ def get_classification_skorch_callbacks(model_id,
         HistorySaver(target=history_fn)
     ]
 
-    if neptune_ctx is not None:
+    if "NEPTUNE_ONLINE_CONTEXT" in os.environ:
         from mltome.neptune import NeptuneSkorchCallback
+        import neptune
+        neptune_ctx = neptune.Context()
         neptune_callback = NeptuneSkorchCallback(
             neptune_ctx,
             batch_targets=batch_targets,

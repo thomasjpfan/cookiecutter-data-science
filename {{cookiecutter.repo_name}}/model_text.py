@@ -8,9 +8,7 @@ from dask_ml.model_selection import GridSearchCV
 import joblib
 import numpy as np
 
-from utils import generate_experiment_params_from_env, normalize_params
-
-exp, params, n_ctx = generate_experiment_params_from_env("text", tags=["text"])
+from utils import run_cli
 
 categories = [
     'alt.atheism',
@@ -18,25 +16,22 @@ categories = [
 ]
 
 
-@exp.command
-def predict(model_id, run_dir, _log):
-    p = normalize_params(params, run_dir)
+def predict(model_id, p, run_dir, log):
 
     test_data = fetch_20newsgroups(subset='test', categories=categories)
     text_model = joblib.load(p.text__model_fn)
     y_predict = text_model.predict(test_data.data)
     np.save(p.text__prediction_fn, y_predict)
-    _log.info(f"Finished prediction, model_id: {model_id}")
+    log.info(f"Finished prediction: {model_id}")
 
 
-@exp.command
-def train_hp(model_id, run_dir, _log, _run):
-    p = normalize_params(params, run_dir)
+def train_hp(model_id, p, run_dir, log):
 
     from dask.distributed import Client
-    client = Client('localhost:8786')
+    # client = Client('localhost:8786')
+    client = Client()
     workers = client.ncores()
-    _log.info(f"Dask distributed: Connected to {workers}")
+    log.info(f"Dask distributed: Connected to {workers}")
 
     data = fetch_20newsgroups(subset='train', categories=categories)
 
@@ -66,14 +61,13 @@ def train_hp(model_id, run_dir, _log, _run):
 
     joblib.dump(grid_search.best_estimator_, p.text__model_fn)
 
-    _log.info(
+    log.info(
         f"Finished hyperparameter search model_id: {model_id}, test_score: "
         f"{test_score:0.6}, train_score: {train_score:0.6}, "
         f"params: {best_params}")
 
-    return [test_score, train_score]
+    return {"valid": test_score, "train": train_score}
 
 
-@exp.command
-def train(model_id, run_dir, _log, _run):
-    _log.info(f"No normal training use train_hp")
+if __name__ == '__main__':
+    run_cli({"train_hp": train_hp, "predict": predict}, "text", tags=["text"])

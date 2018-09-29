@@ -7,27 +7,19 @@ from dask_ml.model_selection import RandomizedSearchCV
 import numpy as np
 import scipy.stats
 
-from utils import generate_experiment_params_from_env, normalize_params
-
-exp, params, n_ctx = generate_experiment_params_from_env(
-    "linear", tags=["linear"])
+from utils import run_cli
 
 
-@exp.command
-def predict(model_id, run_dir, _log):
-    p = normalize_params(params, run_dir)
-
+def predict(model_id, p, run_dir, log):
     # Prediction task
     X = np.random.rand(100).reshape(-1, 1)
     linear_model = joblib.load(p.ridge__model_fn)
     y_predict = linear_model.predict(X)
     np.save(p.ridge__prediction_fn, y_predict)
+    log.info(f"Finished prediction: {model_id}")
 
-    _log.info(f"Finished prediction, model_id: {model_id}")
 
-
-@exp.command
-def train_hp(model_id, _log, _run):
+def train_hp(model_id, p, run_dir, log):
     X = np.random.rand(300).reshape(-1, 1)
     y = 4 * X + np.random.randn(300, 1) * 0.5
 
@@ -41,22 +33,19 @@ def train_hp(model_id, _log, _run):
     train_score = mean_squared_error(y_train, rs.predict(X_train))
     test_score = mean_squared_error(y_test, rs.predict(X_test))
 
-    _log.info(
-        f"Finished hyperparameter search model_id: {model_id}, test_score: "
-        f"{test_score:0.6}, train_score: {train_score:0.6}, "
-        f"params: {rs.best_params_}")
+    log.info(f"Finished hyperparameter search on {model_id} test_score: "
+             f"{test_score:0.6}, train_score: {train_score:0.6}, "
+             f"params: {rs.best_params_}")
 
-    return [test_score, train_score]
+    return {"valid": test_score, "train": train_score}
 
 
-@exp.command
-def train(model_id, run_dir, _log, _run):
-    p = normalize_params(params, run_dir)
+def train(model_id, p, run_dir, log):
 
     X = np.random.rand(300).reshape(-1, 1)
     y = 4 * X + np.random.randn(300, 1) * 0.5
 
-    linear_model = Ridge(params.ridge__alpha)
+    linear_model = Ridge(p.linear__alpha)
     valid_scores = cross_val_score(
         linear_model, X, y, scoring='neg_mean_squared_error', cv=5)
     valid_score = -np.mean(valid_scores)
@@ -65,11 +54,20 @@ def train(model_id, run_dir, _log, _run):
     linear_model.fit(X, y)
     train_score = mean_squared_error(y, linear_model.predict(X))
 
-    joblib.dump(linear_model, p.ridge__model_fn)
-    _run.add_artifact(p.ridge__model_fn)
+    joblib.dump(linear_model, p.linear__model_fn)
 
-    _log.info(f"Finished training, model_id: {model_id}, val_score: "
-              f"{valid_score:0.6}+/-{valid_score_std:0.6}, "
-              f"train_score: {train_score:0.6}")
-    # valid score/error, train score/error
-    return [valid_score, train_score]
+    log.info(f"Finished training {model_id} val_score: "
+             f"{valid_score:0.6}+/-{valid_score_std:0.6}, "
+             f"train_score: {train_score:0.6}")
+    return {"valid": valid_score, "train": train_score}
+
+
+if __name__ == '__main__':
+    run_cli(
+        {
+            "train": train,
+            "train_hp": train_hp,
+            "predict": predict
+        },
+        "linear",
+        tags=["linear"])

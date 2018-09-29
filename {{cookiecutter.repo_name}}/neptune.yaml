@@ -34,9 +34,9 @@ parameters:
   files__proc_test: test.parq
 
   # Ridge
-  ridge__alpha: 0.9
-  ridge__model_fn: ridge_model.pkl
-  ridge__prediction_fn: ridge_pred.npy
+  linear__alpha: 0.9
+  linear__model_fn: ridge_model.pkl
+  linear__prediction_fn: ridge_pred.npy
 
   # neutral network
   simple_nn__model_fn: nn_simple_model.pkl
