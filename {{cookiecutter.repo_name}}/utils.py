@@ -73,9 +73,9 @@ def get_stream_logger(name, level=logging.INFO):
     return logger
 
 
-def get_params(
+def get_config(
         root_dir=".",
-        config_fn="neptune.yaml",
+        config_fn="config.yaml",
         raw_root="data/raw",
         process_root="data/proc",
         raw_key_root="files__raw_",
@@ -85,21 +85,18 @@ def get_params(
     with open(config_fn, "r") as f:
         config = yaml.safe_load(f)
 
-    params = config["parameters"]
-    for key, value in params.items():
+    for key, value in config.items():
         if key.startswith(raw_key_root):
-            config["parameters"][key] = Path(
-                os.path.join(root_dir, raw_root, value))
+            config[key] = Path(os.path.join(root_dir, raw_root, value))
         elif key.startswith(process_key_root):
-            config["parameters"][key] = Path(
-                os.path.join(root_dir, process_root, value))
+            config[key] = Path(os.path.join(root_dir, process_root, value))
 
-    return munchify(params)
+    return munchify(config)
 
 
-def normalize_params(params, run_dir):
+def normalize_config(config, run_dir):
     output = {}
-    for key, value in params.items():
+    for key, value in config.items():
         if key.endswith("_fn"):
             output[key] = Path(os.path.join(run_dir, value))
         else:
@@ -112,7 +109,7 @@ def run_cli(
         model_name,
         tags=None,
         root_dir=".",
-        config_fn="neptune.yaml",
+        config_fn="config.yaml",
         raw_root="data/raw",
         process_root="data/proc",
 ):
@@ -134,7 +131,7 @@ def run_cli(
     run_id = args.run_id or datetime.datetime.utcnow().strftime(
         "%Y-%m-%dT%H-%M-%S")
 
-    params = get_params(
+    config = get_config(
         root_dir=root_dir,
         config_fn=config_fn,
         raw_root=raw_root,
@@ -153,29 +150,27 @@ def run_cli(
     file_hander = get_log_file_handler(log_fn)
     log.addHandler(file_hander)
 
-    p = normalize_params(params, run_dir)
+    p = normalize_config(config, run_dir)
 
-    model_params = {k: v for k, v in p.items() if k.startswith(model_name)}
-    log.info(pformat(model_params))
+    model_config = {k: v for k, v in p.items() if k.startswith(model_name)}
+    log.info(pformat(model_config))
 
-    neptune_ctx = None
-    if "NEPTUNE_ONLINE_CONTEXT" in os.environ:
-        import neptune
+    comet_exp = None
+    if not debug and "COMET_API_KEY" in os.environ:
+        from comet_ml import Experiment
+        comet_exp = Experiment(
+            api_key=os.environ.get("COMET_API_KEY"),
+            project_name=p.name,
+            log_code=False)
 
-        neptune_ctx = neptune.Context()
-        neptune_ctx.properties["model_id"] = model_id
-        for tag in tags:
-            neptune_ctx.tags.append(tag)
-
-    output = func_dict[args.cmd](model_id, p, run_dir, log) or {}
+    output = func_dict[args.cmd](model_id, p, run_dir, log, comet_exp) or {}
 
     if not debug:
         from mlflow import log_metric, log_artifact, log_param
-
         for k, v in output.items():
             log_metric(k, v)
-            if neptune_ctx is not None:
-                neptune_ctx.channel_send(k, v)
+        if comet_exp is not None:
+            comet_exp.log_metrics(output)
         log_artifact(log_fn)
         log_param("model_id", model_id)
 
@@ -184,6 +179,7 @@ def get_classification_skorch_callbacks(model_id,
                                         checkpoint_fn,
                                         history_fn,
                                         pgroups,
+                                        comet_exp,
                                         log_func=print,
                                         per_epoch=True):
 
@@ -222,12 +218,10 @@ def get_classification_skorch_callbacks(model_id,
     ]
 
     if "NEPTUNE_ONLINE_CONTEXT" in os.environ:
-        from mltome.neptune import NeptuneSkorchCallback
-        import neptune
+        from mltome.skorch import CometSkorchCallback
 
-        neptune_ctx = neptune.Context()
-        neptune_callback = NeptuneSkorchCallback(
-            neptune_ctx,
+        neptune_callback = CometSkorchCallback(
+            comet_exp,
             batch_targets=batch_targets,
             epoch_targets=epoch_targets,
         )

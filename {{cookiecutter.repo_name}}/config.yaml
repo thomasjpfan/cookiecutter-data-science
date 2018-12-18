@@ -1,0 +1,22 @@
+---
+name: {{ cookiecutter.repo_name }}
+
+# files
+files__raw_train: train.csv
+files__raw_test: test.csv
+files__proc_train: train.parq
+files__proc_test: test.parq
+
+# Ridge
+linear__alpha: 0.9
+linear__model_fn: ridge_model.pkl
+linear__prediction_fn: ridge_pred.npy
+
+# neutral network
+simple_nn__model_fn: nn_simple_model.pkl
+simple_nn__history_fn: nn_simple_history.json
+simple_nn__prediction_fn: nn_simple_pred.npy
+
+# text
+text__model_fn: text_model.pkl
+text__prediction_fn: text_pred.npy
