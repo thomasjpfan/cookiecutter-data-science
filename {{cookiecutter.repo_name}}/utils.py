@@ -74,12 +74,12 @@ def get_stream_logger(name, level=logging.INFO):
 
 
 def get_params(
-    root_dir=".",
-    config_fn="neptune.yaml",
-    raw_root="data/raw",
-    process_root="data/proc",
-    raw_key_root="files__raw_",
-    process_key_root="files__proc_",
+        root_dir=".",
+        config_fn="neptune.yaml",
+        raw_root="data/raw",
+        process_root="data/proc",
+        raw_key_root="files__raw_",
+        process_key_root="files__proc_",
 ):
     config_fn = os.path.join(root_dir, config_fn)
     with open(config_fn, "r") as f:
@@ -89,12 +89,10 @@ def get_params(
     for key, value in params.items():
         if key.startswith(raw_key_root):
             config["parameters"][key] = Path(
-                os.path.join(root_dir, raw_root, value)
-            )
+                os.path.join(root_dir, raw_root, value))
         elif key.startswith(process_key_root):
             config["parameters"][key] = Path(
-                os.path.join(root_dir, process_root, value)
-            )
+                os.path.join(root_dir, process_root, value))
 
     return munchify(params)
 
@@ -110,13 +108,13 @@ def normalize_params(params, run_dir):
 
 
 def run_cli(
-    func_dict,
-    model_name,
-    tags=None,
-    root_dir=".",
-    config_fn="neptune.yaml",
-    raw_root="data/raw",
-    process_root="data/proc",
+        func_dict,
+        model_name,
+        tags=None,
+        root_dir=".",
+        config_fn="neptune.yaml",
+        raw_root="data/raw",
+        process_root="data/proc",
 ):
 
     if tags is None:
@@ -127,16 +125,14 @@ def run_cli(
     func_choices = list(func_dict.keys())
 
     parser.add_argument(
-        "cmd", choices=func_choices, help="command to run on model"
-    )
+        "cmd", choices=func_choices, help="command to run on model")
     parser.add_argument("-id", "--run-id", help="run id")
     parser.add_argument("-d", "--debug", action="store_true", help="debug")
 
     args = parser.parse_args()
     debug = args.debug
     run_id = args.run_id or datetime.datetime.utcnow().strftime(
-        "%Y-%m-%dT%H-%M-%S"
-    )
+        "%Y-%m-%dT%H-%M-%S")
 
     params = get_params(
         root_dir=root_dir,
@@ -184,9 +180,12 @@ def run_cli(
         log_param("model_id", model_id)
 
 
-def get_classification_skorch_callbacks(
-    model_id, checkpoint_fn, history_fn, pgroups, log_func=print, per_epoch=True
-):
+def get_classification_skorch_callbacks(model_id,
+                                        checkpoint_fn,
+                                        history_fn,
+                                        pgroups,
+                                        log_func=print,
+                                        per_epoch=True):
 
     from skorch.callbacks import EpochScoring
     from skorch.callbacks import Checkpoint
@@ -209,8 +208,8 @@ def get_classification_skorch_callbacks(
 
     callbacks = [
         EpochScoring(
-            "accuracy", name="train_acc", lower_is_better=False, on_train=True
-        ),
+            "accuracy", name="train_acc", lower_is_better=False,
+            on_train=True),
         LRRecorder(group_names=pgroup_names),
         TensorboardXLogger(
             tensorboard_log_dir,
