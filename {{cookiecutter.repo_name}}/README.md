@@ -15,4 +15,4 @@ python model_linear.py predict -id latest
 
 ### Using Comet to log experiments
 
-Define "COMET_API_KEY" and run scripts.
+Define "COMET_API_KEY" and "COMET_DISABLE_AUTO_LOGGING=1" and run scripts.

@@ -161,7 +161,12 @@ def run_cli(
         comet_exp = Experiment(
             api_key=os.environ.get("COMET_API_KEY"),
             project_name=p.name,
-            log_code=False)
+            log_code=False,
+            log_graph=False,
+            parse_args=False,
+            auto_param_logging=False,
+            auto_metric_logging=False)
+        comet_exp.log_parameters(model_config)
 
     output = func_dict[args.cmd](model_id, p, run_dir, log, comet_exp) or {}
 
