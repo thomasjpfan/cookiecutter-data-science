@@ -189,11 +189,9 @@ def get_classification_skorch_callbacks(model_id,
                                         per_epoch=True):
 
     from skorch.callbacks import EpochScoring
-    from skorch.callbacks import Checkpoint
 
     from mltome.skorch.callbacks import (
         LRRecorder,
-        HistorySaver,
         TensorboardXLogger,
     )
 
@@ -218,8 +216,6 @@ def get_classification_skorch_callbacks(model_id,
             epoch_targets=epoch_targets,
             epoch_groups=["acc"],
         ),
-        Checkpoint(target=checkpoint_fn, sink=log_func),
-        HistorySaver(target=history_fn),
     ]
 
     if comet_exp is not None:
