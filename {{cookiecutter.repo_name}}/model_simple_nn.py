@@ -63,6 +63,7 @@ def train(model_id, p, run_dir, log, comet_exp=None):
         p.simple_nn__model_fn,
         p.simple_nn__history_fn,
         pgroups,
+        comet_exp=comet_exp,
         log_func=log.info)
 
     net.callbacks.extend(callbacks)

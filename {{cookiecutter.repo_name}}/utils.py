@@ -184,7 +184,7 @@ def get_classification_skorch_callbacks(model_id,
                                         checkpoint_fn,
                                         history_fn,
                                         pgroups,
-                                        comet_exp,
+                                        comet_exp=None,
                                         log_func=print,
                                         per_epoch=True):
 
