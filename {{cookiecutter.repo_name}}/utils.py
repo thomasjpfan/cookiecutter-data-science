@@ -190,11 +190,11 @@ def get_classification_skorch_callbacks(model_id,
 
     from mltome.skorch.callbacks import (
         LRRecorder,
-        TensorboardXLogger,
+        # TensorboardXLogger,
     )
 
     pgroup_names = [item[0] + "_lr" for item in pgroups]
-    tensorboard_log_dir = os.path.join("artifacts/runs", model_id)
+    # tensorboard_log_dir = os.path.join("artifacts/runs", model_id)
 
     batch_targets = ["train_loss"]
     epoch_targets = ["train_acc", "valid_acc"]
@@ -208,12 +208,12 @@ def get_classification_skorch_callbacks(model_id,
             "accuracy", name="train_acc", lower_is_better=False,
             on_train=True),
         LRRecorder(group_names=pgroup_names),
-        TensorboardXLogger(
-            tensorboard_log_dir,
-            batch_targets=batch_targets,
-            epoch_targets=epoch_targets,
-            epoch_groups=["acc"],
-        ),
+        # TensorboardXLogger(
+        #     tensorboard_log_dir,
+        #     batch_targets=batch_targets,
+        #     epoch_targets=epoch_targets,
+        #     epoch_groups=["acc"],
+        # ),
         Checkpoint(dirname=run_dir)
     ]
 

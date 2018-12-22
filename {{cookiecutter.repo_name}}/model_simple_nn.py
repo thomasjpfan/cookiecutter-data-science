@@ -59,7 +59,7 @@ def train(model_id, p, run_dir, log, comet_exp=None):
     ]
 
     net.set_params(optimizer__param_groups=pgroups)
-    # net.set_params(callbacks__print_log__sink=log.info)
+    net.set_params(callbacks__print_log__sink=log.info)
 
     callbacks = get_classification_skorch_callbacks(
         model_id, pgroups, run_dir, comet_exp=comet_exp)
