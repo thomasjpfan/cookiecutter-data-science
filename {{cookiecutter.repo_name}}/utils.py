@@ -181,14 +181,12 @@ def run_cli(
 
 
 def get_classification_skorch_callbacks(model_id,
-                                        checkpoint_fn,
-                                        history_fn,
                                         pgroups,
+                                        run_dir,
                                         comet_exp=None,
-                                        log_func=print,
                                         per_epoch=True):
 
-    from skorch.callbacks import EpochScoring
+    from skorch.callbacks import EpochScoring, Checkpoint
 
     from mltome.skorch.callbacks import (
         LRRecorder,
@@ -216,6 +214,7 @@ def get_classification_skorch_callbacks(model_id,
             epoch_targets=epoch_targets,
             epoch_groups=["acc"],
         ),
+        Checkpoint(dirname=run_dir)
     ]
 
     if comet_exp is not None:

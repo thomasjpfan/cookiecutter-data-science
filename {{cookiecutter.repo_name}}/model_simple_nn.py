@@ -5,6 +5,7 @@ from torch import nn
 import torch.nn.functional as F
 
 from skorch import NeuralNetClassifier
+from skorch.callbacks import Checkpoint
 
 from utils import get_classification_skorch_callbacks, run_cli
 
@@ -34,8 +35,10 @@ def predict(model_id, p, run_dir, log, comet_exp=None):
 
     X, _ = make_classification(1000, 20, n_informative=10, random_state=0)
     X = X.astype(np.float32)
+
+    cp = Checkpoint(dirname=run_dir)
     net.initialize()
-    net.load_params(p.simple_nn__model_fn)
+    net.load_params(checkpoint=cp)
 
     y_predict = net.predict_proba(X)
     np.save(p.simple_nn__prediction_fn, y_predict)
@@ -56,15 +59,10 @@ def train(model_id, p, run_dir, log, comet_exp=None):
     ]
 
     net.set_params(optimizer__param_groups=pgroups)
-    net.set_params(callbacks__print_log__sink=log.info)
+    # net.set_params(callbacks__print_log__sink=log.info)
 
     callbacks = get_classification_skorch_callbacks(
-        model_id,
-        p.simple_nn__model_fn,
-        p.simple_nn__history_fn,
-        pgroups,
-        comet_exp=comet_exp,
-        log_func=log.info)
+        model_id, pgroups, run_dir, comet_exp=comet_exp)
 
     net.callbacks.extend(callbacks)
     net.fit(X, y)
