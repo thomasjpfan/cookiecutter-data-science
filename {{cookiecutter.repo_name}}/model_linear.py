@@ -10,7 +10,7 @@ import scipy.stats
 from utils import run_cli
 
 
-def predict(model_id, p, run_dir, log):
+def predict(model_id, p, run_dir, log, comet_exp=None):
     # Prediction task
     X = np.random.rand(100).reshape(-1, 1)
     linear_model = joblib.load(p.ridge__model_fn)
@@ -19,7 +19,7 @@ def predict(model_id, p, run_dir, log):
     log.info(f"Finished prediction: {model_id}")
 
 
-def train_hp(model_id, p, run_dir, log):
+def train_hp(model_id, p, run_dir, log, comet_exp=None):
     X = np.random.rand(300).reshape(-1, 1)
     y = 4 * X + np.random.randn(300, 1) * 0.5
 
@@ -40,7 +40,7 @@ def train_hp(model_id, p, run_dir, log):
     return {"valid": test_score, "train": train_score}
 
 
-def train(model_id, p, run_dir, log):
+def train(model_id, p, run_dir, log, comet_exp=None):
 
     X = np.random.rand(300).reshape(-1, 1)
     y = 4 * X + np.random.randn(300, 1) * 0.5
@@ -63,11 +63,10 @@ def train(model_id, p, run_dir, log):
 
 
 if __name__ == '__main__':
-    run_cli(
-        {
-            "train": train,
-            "train_hp": train_hp,
-            "predict": predict
-        },
-        "linear",
-        tags=["linear"])
+    run_cli({
+        "train": train,
+        "train_hp": train_hp,
+        "predict": predict
+    },
+            "linear",
+            tags=["linear"])

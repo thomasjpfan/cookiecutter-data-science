@@ -30,7 +30,7 @@ class MyModule(nn.Module):
 net = NeuralNetClassifier(MyModule, max_epochs=10, lr=0.1, callbacks=[])
 
 
-def predict(model_id, p, run_dir, log):
+def predict(model_id, p, run_dir, log, comet_exp=None):
 
     X, _ = make_classification(1000, 20, n_informative=10, random_state=0)
     X = X.astype(np.float32)
@@ -43,7 +43,7 @@ def predict(model_id, p, run_dir, log):
     log.info(f"Finished prediction: {model_id}")
 
 
-def train(model_id, p, run_dir, log):
+def train(model_id, p, run_dir, log, comet_exp=None):
 
     X, y = make_classification(1000, 20, n_informative=10, random_state=0)
     X = X.astype(np.float32)
@@ -78,8 +78,9 @@ def train(model_id, p, run_dir, log):
 
 
 if __name__ == '__main__':
-    run_cli(
-        {
-            "train": train,
-            "predict": predict
-        }, "simple_nn", tags=["simple_nn"])
+    run_cli({
+        "train": train,
+        "predict": predict
+    },
+            "simple_nn",
+            tags=["simple_nn"])

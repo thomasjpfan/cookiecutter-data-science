@@ -16,7 +16,7 @@ categories = [
 ]
 
 
-def predict(model_id, p, run_dir, log):
+def predict(model_id, p, run_dir, log, comet_exp=None):
 
     test_data = fetch_20newsgroups(subset='test', categories=categories)
     text_model = joblib.load(p.text__model_fn)
@@ -25,7 +25,7 @@ def predict(model_id, p, run_dir, log):
     log.info(f"Finished prediction: {model_id}")
 
 
-def train_hp(model_id, p, run_dir, log):
+def train_hp(model_id, p, run_dir, log, comet_exp=None):
 
     from dask.distributed import Client
     # client = Client('localhost:8786')

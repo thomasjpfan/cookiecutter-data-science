@@ -52,11 +52,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "key", choices=PROCESS_CHOICES, help="key of processed file"
-    )
+        "key", choices=PROCESS_CHOICES, help="key of processed file")
     parser.add_argument(
-        "-f", "--force", action="store_true", help="rerun processing for key"
-    )
+        "-f", "--force", action="store_true", help="rerun processing for key")
     parser.set_defaults(func=process)
 
     args = parser.parse_args()
