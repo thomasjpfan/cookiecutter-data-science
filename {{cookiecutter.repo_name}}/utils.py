@@ -219,7 +219,7 @@ def get_classification_skorch_callbacks(model_id,
     ]
 
     if comet_exp is not None:
-        from mltome.skorch import CometSkorchCallback
+        from mltome.cometml import CometSkorchCallback
 
         neptune_callback = CometSkorchCallback(
             comet_exp,
