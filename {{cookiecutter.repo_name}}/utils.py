@@ -217,7 +217,7 @@ def get_classification_skorch_callbacks(model_id,
         HistorySaver(target=history_fn),
     ]
 
-    if "NEPTUNE_ONLINE_CONTEXT" in os.environ:
+    if comet_exp is not None:
         from mltome.skorch import CometSkorchCallback
 
         neptune_callback = CometSkorchCallback(
