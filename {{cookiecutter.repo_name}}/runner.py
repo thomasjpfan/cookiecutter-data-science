@@ -100,7 +100,7 @@ class Runner(ABC):
     def add_file_logger(self, func_name):
         self.run_dir.mkdir(exist_ok=True)
 
-        log_path = self.run_dir / f"log_{func_name}"
+        log_path = self.run_dir / f"log_{func_name}.txt"
         file_handler = logging.FileHandler(log_path)
         file_handler.setLevel(self.log_level)
         file_handler.setFormatter(self.log_formatter)
