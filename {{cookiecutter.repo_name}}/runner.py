@@ -42,7 +42,7 @@ def normalize_config(config, run_dir):
 
 
 class Runner(ABC):
-    def __init__(self, rid=None, debug=True):
+    def __init__(self, rid=None, debug=False):
         run_id = rid or datetime.utcnow().strftime("%Y-%m-%dT%H-%M-%S")
         model_id = f"{self.name}_{run_id}"
 
@@ -72,7 +72,7 @@ class Runner(ABC):
         config = normalize_config(config, run_dir)
 
         model_config = {
-            k: v
+            k: str(v)
             for k, v in config.items() if k.startswith(self.name)
         }
         log.info(pformat(model_config))
@@ -81,6 +81,8 @@ class Runner(ABC):
 
         comet_exp = None
         if not debug and "COMET_API_KEY" in os.environ:
+            os.environ["COMET_DISABLE_AUTO_LOGGING"] = "1"
+
             from comet_ml import Experiment
             comet_exp = Experiment(
                 api_key=os.environ.get("COMET_API_KEY"),
