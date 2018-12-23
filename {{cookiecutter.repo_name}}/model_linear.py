@@ -7,19 +7,21 @@ from dask_ml.model_selection import RandomizedSearchCV
 import numpy as np
 import scipy.stats
 
-from utils import run_cli
+from runner import get_runner
+import fire
 
 
-def predict(model_id, p, run_dir, log, comet_exp=None):
+def predict(run):
+    cfg = run.cfg
     # Prediction task
     X = np.random.rand(100).reshape(-1, 1)
-    linear_model = joblib.load(p.ridge__model_fn)
+    linear_model = joblib.load(cfg.linear__model_fn)
     y_predict = linear_model.predict(X)
-    np.save(p.ridge__prediction_fn, y_predict)
-    log.info(f"Finished prediction: {model_id}")
+    np.save(cfg.linear__prediction_fn, y_predict)
+    run.log.info(f"Finished prediction: {run.model_id}")
 
 
-def train_hp(model_id, p, run_dir, log, comet_exp=None):
+def train_hp(run):
     X = np.random.rand(300).reshape(-1, 1)
     y = 4 * X + np.random.randn(300, 1) * 0.5
 
@@ -33,19 +35,21 @@ def train_hp(model_id, p, run_dir, log, comet_exp=None):
     train_score = mean_squared_error(y_train, rs.predict(X_train))
     test_score = mean_squared_error(y_test, rs.predict(X_test))
 
-    log.info(f"Finished hyperparameter search on {model_id} test_score: "
-             f"{test_score:0.6}, train_score: {train_score:0.6}, "
-             f"params: {rs.best_params_}")
+    run.log.info(
+        f"Finished hyperparameter search on {run.model_id} test_score: "
+        f"{test_score:0.6}, train_score: {train_score:0.6}, "
+        f"params: {rs.best_params_}")
 
     return {"valid": test_score, "train": train_score}
 
 
-def train(model_id, p, run_dir, log, comet_exp=None):
+def train(run):
+    cfg = run.cfg
 
     X = np.random.rand(300).reshape(-1, 1)
     y = 4 * X + np.random.randn(300, 1) * 0.5
 
-    linear_model = Ridge(p.linear__alpha)
+    linear_model = Ridge(cfg.linear__alpha)
     valid_scores = cross_val_score(
         linear_model, X, y, scoring='neg_mean_squared_error', cv=5)
     valid_score = -np.mean(valid_scores)
@@ -54,19 +58,14 @@ def train(model_id, p, run_dir, log, comet_exp=None):
     linear_model.fit(X, y)
     train_score = mean_squared_error(y, linear_model.predict(X))
 
-    joblib.dump(linear_model, p.linear__model_fn)
+    joblib.dump(linear_model, cfg.linear__model_fn)
 
-    log.info(f"Finished training {model_id} val_score: "
-             f"{valid_score:0.6}+/-{valid_score_std:0.6}, "
-             f"train_score: {train_score:0.6}")
+    run.log.info(f"Finished training {run.model_id} val_score: "
+                 f"{valid_score:0.6}+/-{valid_score_std:0.6}, "
+                 f"train_score: {train_score:0.6}")
     return {"valid": valid_score, "train": train_score}
 
 
 if __name__ == '__main__':
-    run_cli({
-        "train": train,
-        "train_hp": train_hp,
-        "predict": predict
-    },
-            "linear",
-            tags=["linear"])
+    r = get_runner("linear", [train, train_hp, predict])
+    fire.Fire(r)

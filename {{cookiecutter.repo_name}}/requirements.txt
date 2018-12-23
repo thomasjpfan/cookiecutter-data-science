@@ -5,7 +5,8 @@ scipy
 PyYAML
 munch
 pyarrow
--e git+https://github.com/thomasjpfan/mltome
+mltome==0.1.0
 dask-ml
 joblib
 mlflow
+fire
