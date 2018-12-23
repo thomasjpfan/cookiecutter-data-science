@@ -7,6 +7,7 @@ import os
 
 import yaml
 from munch import munchify
+from mlflow import log_metric, log_artifact, log_param
 
 
 def get_config(
@@ -73,9 +74,12 @@ class Runner(ABC):
 
         model_config = {
             k: str(v)
-            for k, v in config.items() if k.startswith(self.name)
+            for k, v in config.items()
+            if k.startswith(self.name) and not k.endswith("_fn")
         }
         log.info(pformat(model_config))
+        for k, v in model_config.items():
+            log_param(k, v)
 
         self.cfg = config
 
@@ -109,7 +113,6 @@ class Runner(ABC):
 
     def log_results(self, results):
         if not self.debug:
-            from mlflow import log_metric, log_artifact, log_param
             for k, v in results.items():
                 log_metric(k, v)
             if self.comet_exp is not None:
