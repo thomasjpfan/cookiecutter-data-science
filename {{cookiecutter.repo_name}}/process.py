@@ -1,11 +1,12 @@
 """
 Create processed files
 """
-import argparse
+import fire
 
 import pandas as pd
 
-from utils import get_params, from_dataframe_cache
+from runner import get_config
+from utils import from_dataframe_cache
 
 
 @from_dataframe_cache("files__proc_train")
@@ -27,17 +28,14 @@ PROCESS_CHOICES = [
 ]
 
 
-def process(args):
-    key = args.key
-    force = args.force
+def process(key, force=False):
 
-    params = get_params()
-
+    config = get_config()
     key = f"files__proc_{key}"
     try:
-        process_fn = params[key]
+        process_fn = config[key]
     except KeyError:
-        print(f"files/processed/{key} does not exists in params")
+        print(f"files/processed/{key} does not exists in config")
         return
 
     if process_fn.exists() and not force:
@@ -45,17 +43,8 @@ def process(args):
         return
 
     print(f"Processing {key} filename: {process_fn}")
-    PROCESS_FUNCS[key](params, force)
+    PROCESS_FUNCS[key](config, force)
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument(
-        "key", choices=PROCESS_CHOICES, help="key of processed file")
-    parser.add_argument(
-        "-f", "--force", action="store_true", help="rerun processing for key")
-    parser.set_defaults(func=process)
-
-    args = parser.parse_args()
-    args.func(args)
+    fire.Fire(process)
